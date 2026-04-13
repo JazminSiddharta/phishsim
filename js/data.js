@@ -13,33 +13,36 @@ const PHISHING_SCENARIOS = [
     categoria: "urgencia",
     nivel: "basico",
     nivelLabel: "Básico",
-    asunto: "⚠️ Tu cuenta bancaria ha sido SUSPENDIDA",
-    remitente: "seguridad@bancoseguro-mx.com",
-    remitenteNombre: "Banco Seguro México",
+    asunto: "Tu estado de cuenta BBVA está listo",
+    remitente: "estadodecuenta@bbva.com",
+    remitenteNombre: "BBVA México",
     cuerpo: `
-      <p>Estimado cliente,</p>
-      <p>Hemos detectado <strong>actividad inusual</strong> en tu cuenta. Por tu seguridad, 
-      hemos <strong>suspendido temporalmente</strong> el acceso a tus fondos.</p>
-      <p>Para reactivar tu cuenta debes verificar tu identidad 
-      <strong>antes de las próximas 24 horas</strong>, de lo contrario tu cuenta 
-      será cancelada permanentemente.</p>
-      <p>Haz clic en el botón de abajo para verificar tu identidad:</p>
+      <p>Hola,</p>
+      <p>Tu estado de cuenta del mes de <strong>marzo 2025</strong> ya está disponible.</p>
+      <p>Resumen de tu cuenta:</p>
+      <ul>
+        <li><strong>Saldo actual:</strong> Disponible en la app</li>
+        <li><strong>Fecha de corte:</strong> 15 de marzo 2025</li>
+        <li><strong>Fecha límite de pago:</strong> 5 de abril 2025</li>
+      </ul>
+      <p>Consulta tu estado de cuenta completo en la app BBVA o en bbva.mx</p>
+      <p>Si tienes dudas llama al <strong>55 5226 2663</strong>, número oficial en tu tarjeta.</p>
     `,
-    tecnica: "Miedo + Urgencia temporal",
-    esPhishing: true,
+    tecnica: "Comunicación bancaria legítima",
+    esPhishing: false,
     dificultad: 1,
-    senalesAlerta: [
-      "El dominio del remitente es 'bancoseguro-mx.com' — los bancos reales usan sus dominios oficiales conocidos",
-      "Los bancos NUNCA suspenden cuentas por correo electrónico sin contacto previo",
-      "El plazo de 24 horas es una táctica de presión para que no pienses con calma",
-      "Amenaza de consecuencias graves (cancelación permanente) para provocar pánico",
-      "Uso excesivo de negritas y mayúsculas para generar urgencia visual"
+    senalesConfianza: [
+      "El dominio 'bbva.com' es el dominio oficial y verificable de BBVA",
+      "No genera urgencia ni amenaza con consecuencias graves",
+      "No pide que hagas clic en ningún enlace para ingresar credenciales",
+      "Proporciona el número oficial del banco para verificación",
+      "Solo informa — no solicita ninguna acción inmediata"
     ],
-    explicacion: "Este correo usa la técnica de urgencia combinada con miedo. Al amenazar con cancelar tu cuenta, el atacante busca que actúes sin pensar. Los bancos reales nunca te piden verificar tu identidad por correo con plazos tan cortos.",
+    explicacion: "Este correo era legítimo. BBVA envía notificaciones de estado de cuenta desde bbva.com, sin pedir credenciales ni generar urgencia. La clave está en que solo informa y dirige al usuario a canales oficiales verificables.",
     consejos: [
-      "Ante cualquier correo de tu banco, llama directamente al número oficial de tu tarjeta",
-      "Nunca hagas clic en enlaces de correos que generen urgencia o miedo",
-      "Verifica siempre el dominio completo del remitente"
+      "Un correo legítimo de tu banco nunca te pide ingresar tu contraseña desde un enlace",
+      "Verifica siempre que el dominio sea exactamente el oficial, sin guiones ni palabras extra",
+      "Los correos informativos como este son seguros — los peligrosos son los que piden acción inmediata"
     ]
   },
 
@@ -231,33 +234,37 @@ const PHISHING_SCENARIOS = [
     categoria: "recompensa",
     nivel: "basico",
     nivelLabel: "Básico",
-    asunto: "🎉 ¡FELICIDADES! Has sido seleccionado como ganador",
-    remitente: "premios@sorteos-ganadores-mx.com",
-    remitenteNombre: "Sorteos Ganadores México",
+    asunto: "Tu pedido #48291 ha sido enviado — Liverpool",
+    remitente: "notificaciones@liverpool.com.mx",
+    remitenteNombre: "Liverpool México",
     cuerpo: `
-      <p>¡Estimado participante!</p>
-      <p>Nos complace informarte que has sido seleccionado como 
-      <strong>GANADOR</strong> de nuestro sorteo mensual.</p>
-      <p>Tu premio: <strong>$15,000 MXN en efectivo</strong> 🎊</p>
-      <p>Para reclamar tu premio solo necesitas verificar tu identidad 
-      y pagar el <strong>seguro de envío de $250 MXN</strong> para 
-      procesar la transferencia a tu cuenta.</p>
+      <p>Hola,</p>
+      <p>¡Tu pedido está en camino! Aquí está el resumen de tu envío:</p>
+      <ul>
+        <li><strong>Número de pedido:</strong> #48291</li>
+        <li><strong>Producto:</strong> Tenis Nike Air Max — Talla 25</li>
+        <li><strong>Transportista:</strong> Estafeta</li>
+        <li><strong>Entrega estimada:</strong> 3 a 5 días hábiles</li>
+      </ul>
+      <p>Puedes rastrear tu pedido directamente en <strong>liverpool.com.mx</strong> 
+      con tu número de orden.</p>
+      <p>Si no realizaste esta compra, llama al <strong>800 543 7477</strong>.</p>
     `,
-    tecnica: "Recompensa + Reciprocidad (pagar para recibir)",
-    esPhishing: true,
+    tecnica: "Notificación de compra legítima",
+    esPhishing: false,
     dificultad: 1,
-    senalesAlerta: [
-      "Nunca participaste en ningún sorteo de esta empresa",
-      "Pedir dinero para recibir un premio es la señal más clara de estafa",
-      "Emojis excesivos y mayúsculas son señales de correos no profesionales",
-      "El dominio 'sorteos-ganadores-mx.com' es claramente genérico y sospechoso",
-      "Los concursos legítimos nunca cobran para entregar premios"
+    senalesConfianza: [
+      "El dominio 'liverpool.com.mx' es el dominio oficial verificable de Liverpool",
+      "No pide credenciales ni datos personales",
+      "Dirige a rastrear en el sitio oficial, no en un enlace del correo",
+      "Proporciona número oficial de atención al cliente",
+      "El tono es informativo, sin urgencia ni amenazas"
     ],
-    explicacion: "Este es el clásico 'paga para ganar'. La víctima paga los $250 de 'seguro' y nunca recibe nada. Es el ataque más fácil de identificar, pero sigue siendo efectivo porque la promesa de dinero fácil nubla el juicio.",
+    explicacion: "Este correo era legítimo. Liverpool envía confirmaciones de envío desde liverpool.com.mx con información específica del pedido. No solicita ningún dato sensible y dirige al usuario al sitio oficial para rastrear.",
     consejos: [
-      "Ningún concurso legítimo te pide pagar para recibir tu premio",
-      "Si no participaste en un sorteo, no puedes haber ganado",
-      "Ante cualquier premio inesperado, la respuesta correcta es ignorar"
+      "Las notificaciones de compra legítimas tienen número de pedido específico y datos concretos",
+      "Siempre rastrea tus pedidos entrando directamente al sitio oficial, no desde el link del correo",
+      "Un correo de tienda legítimo nunca te pide volver a ingresar tu contraseña o datos de pago"
     ]
   },
 
