@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishSim — Simulador de Phishing</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1: BIENVENIDA
+  ══════════════════════════════════════ -->
+  <div id="pantalla-bienvenida" class="pantalla activa">
+    <div class="contenedor-central">
+      <div class="logo">🎣</div>
+      <h1>PhishSim</h1>
+      <p class="subtitulo">Plataforma de Simulación de Phishing</p>
+      <p class="descripcion">
+        Pon a prueba tu capacidad para detectar correos de phishing. 
+        Enfrentarás <strong>9 escenarios reales</strong> basados en técnicas 
+        de ingeniería social documentadas.
+      </p>
+      <div class="categorias-preview">
+        <div class="categoria-badge urgencia">⚡ Urgencia</div>
+        <div class="categoria-badge autoridad">🏛️ Autoridad</div>
+        <div class="categoria-badge recompensa">🎁 Recompensa</div>
+      </div>
+      <p class="instruccion">
+        Para cada correo tendrás <strong>3 opciones</strong>: 
+        hacer clic en el enlace, ignorarlo o reportarlo como phishing.
+      </p>
+      <button class="btn-principal" onclick="iniciarSimulacion()">
+        Comenzar Simulación →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 2: SIMULADOR DE CORREOS
+  ══════════════════════════════════════ -->
+  <div id="pantalla-simulador" class="pantalla">
+    
+    <!-- Barra de progreso -->
+    <div class="barra-superior">
+      <div class="progreso-info">
+        <span id="correo-actual">Correo 1</span> de 
+        <span id="total-correos">9</span>
+      </div>
+      <div class="barra-progreso">
+        <div class="barra-relleno" id="barra-relleno"></div>
+      </div>
+      <div class="categoria-actual" id="categoria-actual"></div>
+    </div>
+
+    <!-- Bandeja de entrada simulada -->
+    <div class="contenedor-email">
+      
+      <!-- Cabecera del correo -->
+      <div class="email-header">
+        <div class="email-avatar" id="email-avatar">B</div>
+        <div class="email-meta">
+          <div class="email-remitente" id="email-remitente"></div>
+          <div class="email-direccion" id="email-direccion"></div>
+        </div>
+        <div class="email-nivel" id="email-nivel"></div>
+      </div>
+
+      <!-- Asunto -->
+      <div class="email-asunto" id="email-asunto"></div>
+
+      <!-- Cuerpo del correo -->
+      <div class="email-cuerpo" id="email-cuerpo"></div>
+
+      <!-- Botón de enlace simulado -->
+      <div class="email-enlace-contenedor">
+        <button class="btn-enlace-phishing" id="btn-enlace">
+          🔗 Acceder al enlace
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Acciones del usuario -->
+    <div class="acciones">
+      <p class="acciones-titulo">¿Qué haces con este correo?</p>
+      <div class="botones-accion">
+        <button class="btn-accion btn-clic" onclick="registrarDecision('clic')">
+          🖱️ Hacer clic en el enlace
+        </button>
+        <button class="btn-accion btn-ignorar" onclick="registrarDecision('ignorar')">
+          🙈 Ignorar el correo
+        </button>
+        <button class="btn-accion btn-reportar" onclick="registrarDecision('reportar')">
+          🚨 Reportar como phishing
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 3: FEEDBACK EDUCATIVO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-feedback" class="pantalla">
+    <div class="contenedor-feedback">
+
+      <div class="feedback-header" id="feedback-header">
+        <div class="feedback-icono" id="feedback-icono"></div>
+        <h2 id="feedback-titulo"></h2>
+        <p id="feedback-subtitulo"></p>
+      </div>
+
+      <div class="feedback-seccion">
+        <h3>📧 ¿Era phishing?</h3>
+        <p id="feedback-explicacion"></p>
+      </div>
+
+      <div class="feedback-seccion">
+        <h3>🚩 Señales de alerta que debiste notar:</h3>
+        <ul id="feedback-senales"></ul>
+      </div>
+
+      <div class="feedback-seccion">
+        <h3>💡 Consejos para el futuro:</h3>
+        <ul id="feedback-consejos"></ul>
+      </div>
+
+      <button class="btn-principal" id="btn-siguiente" onclick="siguienteEscenario()">
+        Siguiente correo →
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 4: DASHBOARD DE MÉTRICAS
+  ══════════════════════════════════════ -->
+  <div id="pantalla-dashboard" class="pantalla">
+    <div class="contenedor-dashboard">
+
+      <h1>📊 Tu Perfil de Vulnerabilidad</h1>
+      <p class="dashboard-subtitulo">Basado en tus decisiones durante la simulación</p>
+
+      <!-- Perfil de riesgo general -->
+      <div class="perfil-riesgo" id="perfil-riesgo">
+        <div class="riesgo-icono" id="riesgo-icono"></div>
+        <div class="riesgo-info">
+          <h2 id="riesgo-nivel"></h2>
+          <p id="riesgo-descripcion"></p>
+        </div>
+      </div>
+
+      <!-- Métricas globales -->
+      <div class="metricas-globales">
+        <div class="metrica-card">
+          <div class="metrica-valor" id="tasa-clic">0%</div>
+          <div class="metrica-label">Tasa de Clic</div>
+          <div class="metrica-desc">Correos en los que hiciste clic</div>
+        </div>
+        <div class="metrica-card">
+          <div class="metrica-valor" id="tasa-deteccion">0%</div>
+          <div class="metrica-label">Tasa de Detección</div>
+          <div class="metrica-desc">Correos que reportaste correctamente</div>
+        </div>
+        <div class="metrica-card">
+          <div class="metrica-valor" id="tasa-ignorar">0%</div>
+          <div class="metrica-label">Tasa de Ignorar</div>
+          <div class="metrica-desc">Correos que ignoraste sin reportar</div>
+        </div>
+      </div>
+
+      <!-- Métricas por categoría -->
+      <h2 class="seccion-titulo">Susceptibilidad por Tipo de Ataque</h2>
+      <div class="metricas-categorias">
+
+        <div class="categoria-card urgencia">
+          <div class="categoria-header">
+            <span class="categoria-emoji">⚡</span>
+            <span class="categoria-nombre">Urgencia</span>
+          </div>
+          <div class="categoria-barra-contenedor">
+            <div class="categoria-barra" id="barra-urgencia"></div>
+          </div>
+          <div class="categoria-porcentaje" id="pct-urgencia">0%</div>
+          <div class="categoria-resultado" id="resultado-urgencia"></div>
+        </div>
+
+        <div class="categoria-card autoridad">
+          <div class="categoria-header">
+            <span class="categoria-emoji">🏛️</span>
+            <span class="categoria-nombre">Autoridad</span>
+          </div>
+          <div class="categoria-barra-contenedor">
+            <div class="categoria-barra" id="barra-autoridad"></div>
+          </div>
+          <div class="categoria-porcentaje" id="pct-autoridad">0%</div>
+          <div class="categoria-resultado" id="resultado-autoridad"></div>
+        </div>
+
+        <div class="categoria-card recompensa">
+          <div class="categoria-header">
+            <span class="categoria-emoji">🎁</span>
+            <span class="categoria-nombre">Recompensa</span>
+          </div>
+          <div class="categoria-barra-contenedor">
+            <div class="categoria-barra" id="barra-recompensa"></div>
+          </div>
+          <div class="categoria-porcentaje" id="pct-recompensa">0%</div>
+          <div class="categoria-resultado" id="resultado-recompensa"></div>
+        </div>
+
+      </div>
+
+      <!-- Resumen de decisiones -->
+      <h2 class="seccion-titulo">Resumen de Decisiones</h2>
+      <div id="tabla-decisiones"></div>
+
+      <!-- Botón reiniciar -->
+      <button class="btn-principal btn-reiniciar" onclick="reiniciarSimulacion()">
+        🔄 Repetir Simulación
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/simulator.js"></script>
+  <script src="js/metrics.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
