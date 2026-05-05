@@ -19,32 +19,25 @@ const iniciarSimulacion = () => {
 
 // ── MODO INSPECTOR ─────────────────────────────────────────
 const toggleInspector = () => {
-  const panel = document.getElementById('inspector-panel');
+  const panel   = document.getElementById('inspector-panel');
   const visible = panel.style.display === 'block';
-  if (visible) {
-    panel.style.display = 'none';
-    return;
-  }
+  if (visible) { panel.style.display = 'none'; return; }
 
   const e = Simulator.obtenerActual();
 
-  // Análisis del dominio remitente
-  const dominio    = e.remitente.split('@')[1] || '';
-  const patronesMalos = [/-mx\.|seguridad\.|alertas\.|soporte\.|corp\.|gobierno\./i];
+  const dominio           = e.remitente.split('@')[1] || '';
+  const patronesMalos     = [/-mx\.|seguridad\.|alertas\.|soporte\.|corp\.|gobierno\./i];
   const dominioSospechoso = patronesMalos.some(p => p.test(dominio))
     || !dominio.match(/^[\w-]+\.(com|mx|gob\.mx|org|edu|net)$/i);
 
-  // Análisis del asunto
-  const palabrasUrgencia = /urgente|suspendida|bloqueada|inmediato|24 horas|30 minutos|acción requerida|SUSPENDIDA|GANADOR|GRATIS/i;
-  const asuntoSospechoso = palabrasUrgencia.test(e.asunto);
+  const palabrasUrgencia  = /urgente|suspendida|bloqueada|inmediato|24 horas|30 minutos|acción requerida|SUSPENDIDA|GANADOR|GRATIS/i;
+  const asuntoSospechoso  = palabrasUrgencia.test(e.asunto);
 
-  // URL simulada
-  const urlSimulada = e.esPhishing
+  const urlSimulada  = e.esPhishing
     ? `http://${dominio}/verificar?token=a8f3k2`
     : `https://${dominio}/cuenta`;
   const urlSospechosa = e.esPhishing && !urlSimulada.startsWith('https');
 
-  // Construir items del inspector
   const items = [
     {
       label:  'Dirección del remitente',
@@ -94,7 +87,6 @@ const toggleInspector = () => {
       `).join('')}
     </div>
   `;
-
   panel.style.display = 'block';
 };
 
@@ -110,51 +102,20 @@ const registrarDecision = (decision) => {
 // ── Renderiza el feedback educativo ───────────────────────
 const mostrarFeedback = (escenario, decision) => {
   const header = document.getElementById('feedback-header');
-
   let cfg = {};
 
   if (escenario.esPhishing) {
     const configs = {
-      reportar: {
-        clase:     'correcto',
-        icono:     '🎯',
-        titulo:    '¡Correcto! Lo detectaste',
-        subtitulo: 'Reportaste este correo como phishing. Esa es siempre la mejor decisión.'
-      },
-      ignorar: {
-        clase:     'advertencia',
-        icono:     '😐',
-        titulo:    'Ignoraste el correo',
-        subtitulo: 'Ignorar es mejor que hacer clic, pero lo correcto es reportarlo a tu equipo de seguridad.'
-      },
-      clic: {
-        clase:     'peligro',
-        icono:     '⚠️',
-        titulo:    'Hiciste clic en el enlace',
-        subtitulo: 'En un ataque real, esto podría haber comprometido tus datos o dispositivo.'
-      }
+      reportar: { clase: 'correcto',    icono: '🎯', titulo: '¡Correcto! Lo detectaste',        subtitulo: 'Reportaste este correo como phishing. Esa es siempre la mejor decisión.' },
+      ignorar:  { clase: 'advertencia', icono: '😐', titulo: 'Ignoraste el correo',              subtitulo: 'Ignorar es mejor que hacer clic, pero lo correcto es reportarlo a tu equipo de seguridad.' },
+      clic:     { clase: 'peligro',     icono: '⚠️', titulo: 'Hiciste clic en el enlace',        subtitulo: 'En un ataque real, esto podría haber comprometido tus datos o dispositivo.' }
     };
     cfg = configs[decision];
   } else {
     const configs = {
-      clic: {
-        clase:     'correcto',
-        icono:     '✅',
-        titulo:    '¡Correcto! Era un correo legítimo',
-        subtitulo: 'Identificaste correctamente que este correo era real y seguro.'
-      },
-      ignorar: {
-        clase:     'advertencia',
-        icono:     '😐',
-        titulo:    'Ignoraste un correo legítimo',
-        subtitulo: 'Este correo era real. Ignorarlo no causa daño, pero podrías perder información importante.'
-      },
-      reportar: {
-        clase:     'peligro',
-        icono:     '❌',
-        titulo:    'Falso positivo — era legítimo',
-        subtitulo: 'Reportaste un correo real como phishing. Ser precavido es bueno, pero aprender a distinguir es mejor.'
-      }
+      clic:     { clase: 'correcto',    icono: '✅', titulo: '¡Correcto! Era un correo legítimo', subtitulo: 'Identificaste correctamente que este correo era real y seguro.' },
+      ignorar:  { clase: 'advertencia', icono: '😐', titulo: 'Ignoraste un correo legítimo',      subtitulo: 'Este correo era real. Ignorarlo no causa daño, pero podrías perder información importante.' },
+      reportar: { clase: 'peligro',     icono: '❌', titulo: 'Falso positivo — era legítimo',     subtitulo: 'Reportaste un correo real como phishing. Ser precavido es bueno, pero aprender a distinguir es mejor.' }
     };
     cfg = configs[decision];
   }
@@ -163,11 +124,10 @@ const mostrarFeedback = (escenario, decision) => {
   document.getElementById('feedback-icono').textContent     = cfg.icono;
   document.getElementById('feedback-titulo').textContent    = cfg.titulo;
   document.getElementById('feedback-subtitulo').textContent = cfg.subtitulo;
-
   document.getElementById('feedback-explicacion').textContent = escenario.explicacion;
 
-  const senalesEl      = document.getElementById('feedback-senales');
-  const tituloSenales  = document.getElementById('titulo-senales');
+  const senalesEl     = document.getElementById('feedback-senales');
+  const tituloSenales = document.getElementById('titulo-senales');
 
   if (escenario.esPhishing) {
     tituloSenales.textContent = '🚩 Señales de alerta que debiste notar:';
@@ -191,8 +151,66 @@ const siguienteEscenario = () => {
   if (hayMas) {
     mostrarPantalla('pantalla-simulador');
   } else {
+    Tracker.guardarSesion();
     Metrics.renderizar();
+    renderizarHistorial();
     mostrarPantalla('pantalla-dashboard');
+  }
+};
+
+// ── Historial de sesiones previas ─────────────────────────
+const renderizarHistorial = () => {
+  const historial   = Tracker.cargarHistorial();
+  const contenedor  = document.getElementById('historial-sesiones');
+  if (!contenedor) return;
+
+  // Excluir la sesión actual (última guardada)
+  const previas = historial.slice(0, -1);
+
+  if (previas.length === 0) {
+    contenedor.innerHTML = `
+      <p style="color:var(--gris); font-size:14px;">
+        Esta es tu primera simulación. Aquí verás tu progreso en futuras sesiones.
+      </p>`;
+    return;
+  }
+
+  const filas = previas.reverse().map(s => `
+    <tr>
+      <td>${s.fecha}</td>
+      <td>${s.resumen.total}</td>
+      <td>${s.resumen.correctas} / ${s.resumen.total}</td>
+      <td>${s.resumen.caidas}</td>
+      <td>${s.resumen.promedio}s</td>
+    </tr>
+  `).join('');
+
+  contenedor.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Correos</th>
+          <th>Correctas</th>
+          <th>Caídas</th>
+          <th>T. Promedio</th>
+        </tr>
+      </thead>
+      <tbody>${filas}</tbody>
+    </table>
+    <button onclick="limpiarHistorial()"
+      style="margin-top:12px; background:none; border:1px solid #ddd;
+             color:var(--gris); padding:8px 16px; border-radius:8px;
+             cursor:pointer; font-size:13px;">
+      🗑️ Limpiar historial
+    </button>
+  `;
+};
+
+const limpiarHistorial = () => {
+  if (confirm('¿Segura que quieres borrar todo el historial de sesiones?')) {
+    Tracker.limpiarHistorial();
+    renderizarHistorial();
   }
 };
 
