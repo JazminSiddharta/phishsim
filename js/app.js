@@ -97,7 +97,8 @@ const registrarDecision = (decision) => {
   Tracker.registrar(escenario, decision, tiempo);
   mostrarFeedback(escenario, decision);
   mostrarPantalla('pantalla-feedback');
-};
+// Lanzar análisis de IA en paralelo
+  ClaudeAI.generarFeedback(escenario, decision, Tracker.obtenerTodas().slice(-1)[0]?.tiempo || 0);};
 
 // ── Renderiza el feedback educativo ───────────────────────
 const mostrarFeedback = (escenario, decision) => {
