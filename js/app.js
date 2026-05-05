@@ -20,7 +20,8 @@ const iniciarSimulacion = () => {
 // ── PANTALLA 2 → 3: Registrar decisión y mostrar feedback ─
 const registrarDecision = (decision) => {
   const escenario = Simulator.obtenerActual();
-  Tracker.registrar(escenario, decision);
+  const tiempo = Simulator.obtenerTiempo();
+  Tracker.registrar(escenario, decision, tiempo);
   mostrarFeedback(escenario, decision);
   mostrarPantalla('pantalla-feedback');
 };
@@ -35,21 +36,21 @@ const mostrarFeedback = (escenario, decision) => {
   if (escenario.esPhishing) {
     const configs = {
       reportar: {
-        clase:     'correcto',
-        icono:     '🎯',
-        titulo:    '¡Correcto! Lo detectaste',
+        clase: 'correcto',
+        icono: '🎯',
+        titulo: '¡Correcto! Lo detectaste',
         subtitulo: 'Reportaste este correo como phishing. Esa es siempre la mejor decisión.'
       },
       ignorar: {
-        clase:     'advertencia',
-        icono:     '😐',
-        titulo:    'Ignoraste el correo',
+        clase: 'advertencia',
+        icono: '😐',
+        titulo: 'Ignoraste el correo',
         subtitulo: 'Ignorar es mejor que hacer clic, pero lo correcto es reportarlo a tu equipo de seguridad.'
       },
       clic: {
-        clase:     'peligro',
-        icono:     '⚠️',
-        titulo:    'Hiciste clic en el enlace',
+        clase: 'peligro',
+        icono: '⚠️',
+        titulo: 'Hiciste clic en el enlace',
         subtitulo: 'En un ataque real, esto podría haber comprometido tus datos o dispositivo.'
       }
     };
@@ -58,21 +59,21 @@ const mostrarFeedback = (escenario, decision) => {
     // Correo legítimo
     const configs = {
       clic: {
-        clase:     'correcto',
-        icono:     '✅',
-        titulo:    '¡Correcto! Era un correo legítimo',
+        clase: 'correcto',
+        icono: '✅',
+        titulo: '¡Correcto! Era un correo legítimo',
         subtitulo: 'Identificaste correctamente que este correo era real y seguro.'
       },
       ignorar: {
-        clase:     'advertencia',
-        icono:     '😐',
-        titulo:    'Ignoraste un correo legítimo',
+        clase: 'advertencia',
+        icono: '😐',
+        titulo: 'Ignoraste un correo legítimo',
         subtitulo: 'Este correo era real. Ignorarlo no causa daño, pero podrías perder información importante.'
       },
       reportar: {
-        clase:     'peligro',
-        icono:     '❌',
-        titulo:    'Falso positivo — era legítimo',
+        clase: 'peligro',
+        icono: '❌',
+        titulo: 'Falso positivo — era legítimo',
         subtitulo: 'Reportaste un correo real como phishing. Ser precavido es bueno, pero aprender a distinguir es mejor.'
       }
     };
@@ -81,8 +82,8 @@ const mostrarFeedback = (escenario, decision) => {
 
   // Aplicar configuración al header
   header.className = `feedback-header ${cfg.clase}`;
-  document.getElementById('feedback-icono').textContent     = cfg.icono;
-  document.getElementById('feedback-titulo').textContent    = cfg.titulo;
+  document.getElementById('feedback-icono').textContent = cfg.icono;
+  document.getElementById('feedback-titulo').textContent = cfg.titulo;
   document.getElementById('feedback-subtitulo').textContent = cfg.subtitulo;
 
   // Explicación del escenario

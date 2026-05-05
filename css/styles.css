@@ -12,7 +12,7 @@
   --gris: #6c757d;
   --gris-claro: #f8f9fa;
   --blanco: #ffffff;
-  --sombra: 0 4px 20px rgba(0,0,0,0.1);
+  --sombra: 0 4px 20px rgba(0, 0, 0, 0.1);
   --radio: 12px;
 }
 
@@ -139,7 +139,7 @@ body {
 
 .btn-principal:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(15,52,96,0.4);
+  box-shadow: 0 8px 25px rgba(15, 52, 96, 0.4);
 }
 
 /* ══════════════════════════════════════
@@ -168,7 +168,7 @@ body {
 }
 
 .barra-progreso {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 50px;
   height: 8px;
   width: 100%;
@@ -183,7 +183,7 @@ body {
 }
 
 .categoria-actual {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
 }
 
@@ -291,7 +291,7 @@ body {
 .acciones {
   width: 100%;
   max-width: 700px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radio);
   padding: 20px;
   margin-bottom: 20px;
@@ -324,7 +324,7 @@ body {
 
 .btn-accion:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .btn-clic {
@@ -605,7 +605,7 @@ body {
 }
 
 .categoria-barra-contenedor {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 50px;
   height: 10px;
   margin-bottom: 8px;
@@ -618,9 +618,17 @@ body {
   width: 0%;
 }
 
-.urgencia .categoria-barra { background: var(--urgencia); }
-.autoridad .categoria-barra { background: var(--autoridad); }
-.recompensa .categoria-barra { background: var(--recompensa); }
+.urgencia .categoria-barra {
+  background: var(--urgencia);
+}
+
+.autoridad .categoria-barra {
+  background: var(--autoridad);
+}
+
+.recompensa .categoria-barra {
+  background: var(--recompensa);
+}
 
 .categoria-porcentaje {
   font-size: 22px;
@@ -684,4 +692,79 @@ body {
   .contenedor-dashboard {
     padding: 24px 16px;
   }
+}
+
+/* ══════════════════════════════════════
+   TIMER
+══════════════════════════════════════ */
+.timer-contenedor {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 8px;
+}
+
+.timer-display {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--blanco);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 50px;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+
+.timer-display.rapido {
+  background: rgba(231, 76, 60, 0.5);
+}
+
+/* ══════════════════════════════════════
+   MÉTRICAS DE TIEMPO EN DASHBOARD
+══════════════════════════════════════ */
+.metricas-tiempo {
+  background: var(--gris-claro);
+  border-radius: var(--radio);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.tiempo-principal {
+  text-align: center;
+}
+
+.tiempo-valor {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--oscuro);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.tiempo-label {
+  font-size: 13px;
+  color: var(--gris);
+  font-weight: 600;
+}
+
+.tiempo-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.velocidad-label {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.caidas-impulsivas {
+  font-size: 13px;
+  color: var(--gris);
 }

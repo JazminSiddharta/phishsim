@@ -1,20 +1,44 @@
 // js/simulator.js
 // Módulo que controla la presentación de escenarios
-// Renderiza cada correo simulado en pantalla
+// Renderiza cada correo simulado en pantalla + temporizador por correo
 
 const Simulator = (() => {
 
-  let escenarios = [];
-  let indiceActual = 0;
+  let escenarios    = [];
+  let indiceActual  = 0;
+  let timerInterval = null;
+  let segundos      = 0;
 
-  // Inicializa el simulador con los escenarios
-  const iniciar = (datos) => {
-    escenarios = [...datos];
-    indiceActual = 0;
-    renderizar();
+  // ── Timer ────────────────────────────────────────────────
+  const iniciarTimer = () => {
+    segundos = 0;
+    actualizarDisplayTimer();
+    timerInterval = setInterval(() => {
+      segundos++;
+      actualizarDisplayTimer();
+    }, 1000);
   };
 
-  // Renderiza el escenario actual en el DOM
+  const detenerTimer = () => {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    return segundos;
+  };
+
+  const actualizarDisplayTimer = () => {
+    const el = document.getElementById('timer-display');
+    if (el) el.textContent = `⏱️ ${segundos}s`;
+  };
+
+  // ── Inicializar ──────────────────────────────────────────
+  const iniciar = (datos) => {
+    escenarios    = [...datos];
+    indiceActual  = 0;
+    renderizar();
+    iniciarTimer();
+  };
+
+  // ── Renderizar escenario actual ──────────────────────────
   const renderizar = () => {
     const e = escenarios[indiceActual];
     if (!e) return;
@@ -38,38 +62,37 @@ const Simulator = (() => {
     // Nivel de dificultad con color
     const nivelEl = document.getElementById('email-nivel');
     nivelEl.textContent = e.nivelLabel;
-    nivelEl.className = 'email-nivel';
+    nivelEl.className   = 'email-nivel';
     const colores = {
-      basico:      { bg: '#eafaf1', color: '#27ae60' },
-      intermedio:  { bg: '#fff9e6', color: '#e67e22' },
-      avanzado:    { bg: '#fdecea', color: '#e74c3c' }
+      basico:     { bg: '#eafaf1', color: '#27ae60' },
+      intermedio: { bg: '#fff9e6', color: '#e67e22' },
+      avanzado:   { bg: '#fdecea', color: '#e74c3c' }
     };
     const c = colores[e.nivel] || colores.basico;
     nivelEl.style.background = c.bg;
-    nivelEl.style.color = c.color;
+    nivelEl.style.color      = c.color;
 
     // Asunto y cuerpo
-    document.getElementById('email-asunto').textContent = e.asunto;
-    document.getElementById('email-cuerpo').innerHTML = e.cuerpo;
+    document.getElementById('email-asunto').textContent  = e.asunto;
+    document.getElementById('email-cuerpo').innerHTML    = e.cuerpo;
   };
 
-  // Devuelve el escenario actual
-  const obtenerActual = () => escenarios[indiceActual];
+  // ── API pública ──────────────────────────────────────────
+  const obtenerActual  = () => escenarios[indiceActual];
+  const obtenerTiempo  = () => detenerTimer();
 
-  // Avanza al siguiente escenario
-  // Devuelve true si hay más, false si terminó
   const siguiente = () => {
     indiceActual++;
     if (indiceActual < escenarios.length) {
       renderizar();
+      iniciarTimer();
       return true;
     }
     return false;
   };
 
-  // Indica si ya se recorrieron todos los escenarios
   const termino = () => indiceActual >= escenarios.length;
 
-  return { iniciar, siguiente, obtenerActual, termino };
+  return { iniciar, siguiente, obtenerActual, obtenerTiempo, termino };
 
 })();

@@ -40,7 +40,12 @@
        PANTALLA 2: SIMULADOR DE CORREOS
   ══════════════════════════════════════ -->
   <div id="pantalla-simulador" class="pantalla">
-    
+
+    <!-- Timer -->
+    <div class="timer-contenedor">
+      <div class="timer-display" id="timer-display">⏱️ 0s</div>
+    </div>
+
     <!-- Barra de progreso -->
     <div class="barra-superior">
       <div class="progreso-info">
@@ -117,7 +122,7 @@
       </div>
 
       <div class="feedback-seccion">
-        <h3>🚩 Señales de alerta que debiste notar:</h3>
+        <h3 id="titulo-senales">🚩 Señales de alerta que debiste notar:</h3>
         <ul id="feedback-senales"></ul>
       </div>
 
@@ -142,6 +147,18 @@
       <h1>📊 Tu Perfil de Vulnerabilidad</h1>
       <p class="dashboard-subtitulo">Basado en tus decisiones durante la simulación</p>
 
+      <!-- Métricas de tiempo -->
+      <div class="metricas-tiempo">
+        <div class="tiempo-principal">
+          <div class="tiempo-valor" id="tiempo-promedio">0s</div>
+          <div class="tiempo-label">Tiempo promedio de decisión</div>
+        </div>
+        <div class="tiempo-detalle">
+          <div class="velocidad-label" id="velocidad-label"></div>
+          <div class="caidas-impulsivas" id="caidas-impulsivas"></div>
+        </div>
+      </div>
+
       <!-- Perfil de riesgo general -->
       <div class="perfil-riesgo" id="perfil-riesgo">
         <div class="riesgo-icono" id="riesgo-icono"></div>
@@ -155,8 +172,8 @@
       <div class="metricas-globales">
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-clic">0%</div>
-          <div class="metrica-label">Tasa de Clic</div>
-          <div class="metrica-desc">Correos en los que hiciste clic</div>
+          <div class="metrica-label">Tasa de Caída</div>
+          <div class="metrica-desc">Correos de phishing en los que hiciste clic</div>
         </div>
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-deteccion">0%</div>
@@ -165,8 +182,8 @@
         </div>
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-ignorar">0%</div>
-          <div class="metrica-label">Tasa de Ignorar</div>
-          <div class="metrica-desc">Correos que ignoraste sin reportar</div>
+          <div class="metrica-label">Falsos Positivos</div>
+          <div class="metrica-desc">Correos legítimos reportados como phishing</div>
         </div>
       </div>
 
@@ -216,10 +233,13 @@
       <h2 class="seccion-titulo">Resumen de Decisiones</h2>
       <div id="tabla-decisiones"></div>
 
-      <!-- Botón reiniciar -->
-      <button class="btn-principal btn-reiniciar" onclick="reiniciarSimulacion()">
-        🔄 Repetir Simulación
-      </button>
+      <!-- Botones finales -->
+      <div style="display:flex; gap:12px; margin-top:8px;">
+        <button class="btn-principal btn-reiniciar" onclick="reiniciarSimulacion()"
+          style="flex:1">
+          🔄 Repetir Simulación
+        </button>
+      </div>
 
     </div>
   </div>
