@@ -1,6 +1,6 @@
 // js/simulator.js
 // Módulo que controla la presentación de escenarios
-// Renderiza cada correo simulado en pantalla + temporizador por correo
+// Renderiza cada correo simulado en pantalla + temporizador + orden aleatorio
 
 const Simulator = (() => {
 
@@ -9,6 +9,16 @@ const Simulator = (() => {
   let timerInterval = null;
   let segundos      = 0;
 
+  // ── Shuffle Fisher-Yates ─────────────────────────────────
+  const mezclar = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
   // ── Timer ────────────────────────────────────────────────
   const iniciarTimer = () => {
     segundos = 0;
@@ -16,6 +26,14 @@ const Simulator = (() => {
     timerInterval = setInterval(() => {
       segundos++;
       actualizarDisplayTimer();
+
+      // Cambia color si lleva menos de 6 segundos (zona impulsiva)
+      const el = document.getElementById('timer-display');
+      if (el) {
+        el.className = segundos <= 5
+          ? 'timer-display rapido'
+          : 'timer-display';
+      }
     }, 1000);
   };
 
@@ -32,8 +50,8 @@ const Simulator = (() => {
 
   // ── Inicializar ──────────────────────────────────────────
   const iniciar = (datos) => {
-    escenarios    = [...datos];
-    indiceActual  = 0;
+    escenarios   = mezclar(datos); // ← orden aleatorio aquí
+    indiceActual = 0;
     renderizar();
     iniciarTimer();
   };
@@ -45,10 +63,10 @@ const Simulator = (() => {
 
     // Barra de progreso
     const pct = (indiceActual / escenarios.length) * 100;
-    document.getElementById('barra-relleno').style.width = `${pct}%`;
-    document.getElementById('correo-actual').textContent = `Correo ${indiceActual + 1}`;
-    document.getElementById('total-correos').textContent = escenarios.length;
-    document.getElementById('categoria-actual').textContent =
+    document.getElementById('barra-relleno').style.width     = `${pct}%`;
+    document.getElementById('correo-actual').textContent     = `Correo ${indiceActual + 1}`;
+    document.getElementById('total-correos').textContent     = escenarios.length;
+    document.getElementById('categoria-actual').textContent  =
       `Categoría: ${e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1)} — ${e.tecnica}`;
 
     // Avatar con inicial del remitente
@@ -61,8 +79,8 @@ const Simulator = (() => {
 
     // Nivel de dificultad con color
     const nivelEl = document.getElementById('email-nivel');
-    nivelEl.textContent = e.nivelLabel;
-    nivelEl.className   = 'email-nivel';
+    nivelEl.textContent  = e.nivelLabel;
+    nivelEl.className    = 'email-nivel';
     const colores = {
       basico:     { bg: '#eafaf1', color: '#27ae60' },
       intermedio: { bg: '#fff9e6', color: '#e67e22' },
@@ -73,13 +91,17 @@ const Simulator = (() => {
     nivelEl.style.color      = c.color;
 
     // Asunto y cuerpo
-    document.getElementById('email-asunto').textContent  = e.asunto;
-    document.getElementById('email-cuerpo').innerHTML    = e.cuerpo;
+    document.getElementById('email-asunto').textContent = e.asunto;
+    document.getElementById('email-cuerpo').innerHTML   = e.cuerpo;
+
+    // Resetear modo inspector si estaba abierto
+    const inspector = document.getElementById('inspector-panel');
+    if (inspector) inspector.style.display = 'none';
   };
 
   // ── API pública ──────────────────────────────────────────
-  const obtenerActual  = () => escenarios[indiceActual];
-  const obtenerTiempo  = () => detenerTimer();
+  const obtenerActual = () => escenarios[indiceActual];
+  const obtenerTiempo = () => detenerTimer();
 
   const siguiente = () => {
     indiceActual++;
