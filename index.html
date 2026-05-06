@@ -33,6 +33,10 @@
       <button class="btn-principal" onclick="iniciarSimulacion()">
         Comenzar Simulación →
       </button>
+      <button class="btn-principal" onclick="mostrarPantalla('pantalla-org')"
+        style="margin-top:12px; background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+        👥 Modo Organizacional
+      </button>
       <button class="btn-principal" onclick="mostrarPantalla('pantalla-analyzer')"
         style="margin-top:12px; background: linear-gradient(135deg, #2980b9, #3498db);">
         🔍 Analizar Header Real
@@ -255,19 +259,23 @@
 
       </div>
 
-      <!-- Resumen de decisiones -->
-      <h2 class="seccion-titulo">Resumen de Decisiones</h2>
-      <div id="tabla-decisiones"></div>
-
       <!-- Historial de sesiones -->
       <h2 class="seccion-titulo">📅 Historial de Sesiones</h2>
       <div id="historial-sesiones" style="margin-bottom:24px;"></div>
 
+      <!-- Resumen de decisiones -->
+      <h2 class="seccion-titulo">Resumen de Decisiones</h2>
+      <div id="tabla-decisiones"></div>
+
       <!-- Botones finales -->
-      <div style="display:flex; gap:12px; margin-top:24px;">
+      <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
         <button class="btn-principal" id="btn-pdf" onclick="Reporter.generar()"
           style="flex:1; background: linear-gradient(135deg, #2980b9, #3498db);">
           📄 Descargar Reporte PDF
+        </button>
+        <button class="btn-principal" onclick="mostrarRegistroOrg()"
+          style="flex:1; background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+          👥 Registrar en Modo Org
         </button>
         <button class="btn-principal btn-reiniciar" onclick="reiniciarSimulacion()"
           style="flex:1">
@@ -275,11 +283,59 @@
         </button>
       </div>
 
+      <!-- Modal registro org -->
+      <div id="modal-org" style="display:none; margin-top:16px;
+        background:var(--gris-claro); border-radius:var(--radio); padding:20px;">
+        <p style="font-size:14px; color:var(--oscuro); margin-bottom:12px; font-weight:600;">
+          ¿Con qué nombre quieres aparecer en el dashboard del equipo?
+        </p>
+        <input id="org-nombre-input" type="text" placeholder="Tu nombre o alias..."
+          style="width:100%; padding:10px 14px; border:2px solid #ddd;
+                 border-radius:8px; font-size:14px; margin-bottom:12px;" />
+        <div style="display:flex; gap:10px;">
+          <button class="btn-principal" onclick="registrarEnOrg()" style="flex:2">
+            ✅ Registrar resultado
+          </button>
+          <button onclick="document.getElementById('modal-org').style.display='none'"
+            style="flex:1; background:none; border:1px solid #ddd; border-radius:8px;
+                   cursor:pointer; font-size:13px; color:var(--gris);">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 5: ANALIZADOR DE HEADERS
+       PANTALLA 5: MODO ORGANIZACIONAL
+  ══════════════════════════════════════ -->
+  <div id="pantalla-org" class="pantalla">
+    <div class="contenedor-dashboard">
+
+      <h1>👥 Dashboard Organizacional</h1>
+      <p class="dashboard-subtitulo">
+        Perfil de vulnerabilidad del equipo basado en simulaciones individuales
+      </p>
+
+      <div id="org-dashboard"></div>
+
+      <div style="display:flex; gap:12px; margin-top:24px;">
+        <button class="btn-principal" onclick="iniciarSimulacion()"
+          style="flex:2">
+          ▶️ Nueva Simulación
+        </button>
+        <button class="btn-principal" onclick="mostrarPantalla('pantalla-bienvenida')"
+          style="flex:1; background: linear-gradient(135deg, #6c757d, #495057);">
+          ← Volver
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 6: ANALIZADOR DE HEADERS
   ══════════════════════════════════════ -->
   <div id="pantalla-analyzer" class="pantalla">
     <div class="contenedor-dashboard">
@@ -289,7 +345,6 @@
         Pega el header completo de un correo sospechoso y PhishSim lo analizará automáticamente
       </p>
 
-      <!-- Instrucciones -->
       <div style="
         background: #eaf4fb;
         border-left: 4px solid #2980b9;
@@ -298,15 +353,13 @@
         margin-bottom: 20px;
         font-size: 14px;
         color: #555;
-        line-height: 1.7;
-      ">
+        line-height: 1.7;">
         <strong style="color:#2980b9">¿Cómo obtener el header de un correo?</strong><br>
         En <strong>Gmail:</strong> Abrir correo → ⋮ (tres puntos) → "Mostrar original"<br>
         En <strong>Outlook:</strong> Abrir correo → Archivo → Propiedades → Encabezados<br>
         En <strong>Apple Mail:</strong> Ver → Mensaje → Todos los encabezados
       </div>
 
-      <!-- Área de texto -->
       <textarea id="analyzer-input" placeholder="Pega aquí el header completo del correo..." style="
         width: 100%;
         height: 200px;
@@ -321,10 +374,8 @@
         line-height: 1.6;
       "></textarea>
 
-      <!-- Botones -->
       <div style="display:flex; gap:12px; margin-bottom:24px;">
-        <button class="btn-principal" onclick="Analyzer.analizar()"
-          style="flex:2">
+        <button class="btn-principal" onclick="Analyzer.analizar()" style="flex:2">
           🔍 Analizar Header
         </button>
         <button class="btn-principal" onclick="Analyzer.cargarEjemplo()"
@@ -337,7 +388,6 @@
         </button>
       </div>
 
-      <!-- Resultados -->
       <div id="analyzer-resultados" style="display:none;"></div>
 
     </div>
@@ -352,6 +402,7 @@
   <script src="js/reporter.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/claude.js"></script>
+  <script src="js/org.js"></script>
   <script src="js/app.js"></script>
 
 </body>

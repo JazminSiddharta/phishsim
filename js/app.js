@@ -220,3 +220,23 @@ const reiniciarSimulacion = () => {
   Tracker.reiniciar();
   mostrarPantalla('pantalla-bienvenida');
 };
+
+// ── Modo organizacional ────────────────────────────────────
+const mostrarRegistroOrg = () => {
+  document.getElementById('modal-org').style.display = 'block';
+  document.getElementById('org-nombre-input').focus();
+};
+
+const registrarEnOrg = () => {
+  const nombre = document.getElementById('org-nombre-input').value.trim();
+  if (!nombre) { alert('Por favor escribe tu nombre.'); return; }
+  OrgMode.guardarParticipante(nombre);
+  document.getElementById('modal-org').style.display = 'none';
+  document.getElementById('org-nombre-input').value  = '';
+  alert(`✅ "${nombre}" registrado en el dashboard del equipo.`);
+};
+
+// Renderizar org al entrar a la pantalla
+document.addEventListener('DOMContentLoaded', () => {
+  OrgMode.renderizar();
+});
