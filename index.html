@@ -79,6 +79,11 @@
       </div>
 
       <div class="form-grupo">
+        <label class="form-label">Número de empleado</label>
+        <input type="text" id="input-num-empleado" class="input-campo" placeholder="Ej. EMP-001" />
+      </div>
+
+      <div class="form-grupo">
         <label class="form-label">Tu departamento</label>
         <select id="input-departamento" class="input-campo">
           <option value="">— Selecciona tu área —</option>
@@ -310,6 +315,7 @@
         <div>
           <h1>📊 Dashboard Organizacional</h1>
           <p class="dashboard-subtitulo">SecureAware — Panel de Administración</p>
+          <div class="admin-acciones" id="admin-acciones"></div>
         </div>
         <button class="btn-secundario" onclick="cerrarSesionAdmin()">
           Cerrar sesión
@@ -317,6 +323,15 @@
       </div>
 
       <!-- Resumen general -->
+      <!-- Acciones del admin -->
+      <div class="admin-acciones" id="admin-acciones"></div>
+
+      <!-- Semáforo global -->
+      <div id="semaforo-global"></div>
+
+      <!-- Gráfica por departamento -->
+      <h2 class="seccion-titulo">Susceptibilidad por Departamento</h2>
+      <div id="grafica-deptos"></div>
       <div class="admin-resumen" id="admin-resumen">
         <div class="admin-stat">
           <div class="admin-stat-valor" id="total-participantes">0</div>
@@ -354,6 +369,76 @@
           📭 Aún no hay participantes registrados. Comparte el link de la capacitación con tu equipo.
         </p>
       </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 7: DETALLE DEPARTAMENTO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-depto" class="pantalla">
+    <div class="contenedor-dashboard admin-dashboard">
+
+      <div class="admin-header">
+        <div>
+          <button class="btn-volver" onclick="volverAlAdmin()">
+            ← Volver al dashboard
+          </button>
+          <h1 id="depto-titulo">Departamento</h1>
+          <p class="dashboard-subtitulo" id="depto-subtitulo"></p>
+        </div>
+      </div>
+
+      <!-- Comparativa vs empresa -->
+      <div class="comparativa-banner" id="depto-comparativa"></div>
+
+      <!-- Métricas del departamento -->
+      <div class="admin-resumen" id="depto-metricas"></div>
+
+      <!-- Semáforo del departamento -->
+      <div class="semaforo-contenedor" id="depto-semaforo"></div>
+
+      <!-- Categoría más efectiva en este depto -->
+      <h2 class="seccion-titulo">Susceptibilidad por Tipo de Ataque</h2>
+      <div class="metricas-categorias" id="depto-categorias"></div>
+
+      <!-- Tabla de empleados del departamento -->
+      <h2 class="seccion-titulo" style="margin-top:32px">
+        Empleados del Departamento
+      </h2>
+      <div id="tabla-empleados-depto"></div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 8: DETALLE EMPLEADO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-empleado" class="pantalla">
+    <div class="contenedor-dashboard admin-dashboard">
+
+      <div class="admin-header">
+        <div>
+          <button class="btn-volver" id="btn-volver-depto" onclick="volverAlDepto()">
+            ← Volver al departamento
+          </button>
+          <h1 id="empleado-titulo"></h1>
+          <p class="dashboard-subtitulo" id="empleado-subtitulo"></p>
+        </div>
+      </div>
+
+      <!-- Perfil de riesgo del empleado -->
+      <div class="perfil-riesgo" id="empleado-perfil"></div>
+
+      <!-- Métricas del empleado -->
+      <div class="admin-resumen" id="empleado-metricas"></div>
+
+      <!-- Decisión por decisión -->
+      <h2 class="seccion-titulo">Detalle de Decisiones</h2>
+      <div id="tabla-decisiones-empleado"></div>
+
+      <!-- Recomendaciones -->
+      <div class="recomendaciones-card" id="empleado-recomendaciones"></div>
 
     </div>
   </div>

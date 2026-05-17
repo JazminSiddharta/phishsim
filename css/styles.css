@@ -996,3 +996,309 @@ body {
     gap: 16px;
   }
 }
+
+/* ══════════════════════════════════════
+   BOTÓN VOLVER
+══════════════════════════════════════ */
+.btn-volver {
+  background: transparent;
+  border: none;
+  color: var(--gris);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.btn-volver:hover {
+  color: var(--oscuro);
+}
+
+/* ══════════════════════════════════════
+   COMPARATIVA BANNER
+══════════════════════════════════════ */
+.comparativa-banner {
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.comparativa-banner.mejor {
+  background: var(--recompensa-claro);
+  border-left: 4px solid var(--recompensa);
+  color: #1e8449;
+}
+
+.comparativa-banner.peor {
+  background: var(--urgencia-claro);
+  border-left: 4px solid var(--urgencia);
+  color: #c0392b;
+}
+
+.comparativa-banner.igual {
+  background: var(--autoridad-claro);
+  border-left: 4px solid var(--autoridad);
+  color: #1a6a9a;
+}
+
+.comparativa-icono {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   SEMÁFORO ORGANIZACIONAL
+══════════════════════════════════════ */
+.semaforo-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  border-radius: var(--radio);
+  margin-bottom: 32px;
+  background: var(--gris-claro);
+}
+
+.semaforo-luces {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.semaforo-luz {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.3s;
+}
+
+.semaforo-luz.activa-rojo {
+  background: #e74c3c;
+  box-shadow: 0 0 12px #e74c3c;
+}
+
+.semaforo-luz.activa-amarillo {
+  background: #f39c12;
+  box-shadow: 0 0 12px #f39c12;
+}
+
+.semaforo-luz.activa-verde {
+  background: #27ae60;
+  box-shadow: 0 0 12px #27ae60;
+}
+
+.semaforo-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--oscuro);
+  margin-bottom: 4px;
+}
+
+.semaforo-info p {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════
+   TABLA EMPLEADOS CON CLICK
+══════════════════════════════════════ */
+.fila-clickeable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fila-clickeable:hover td {
+  background: #eef2ff !important;
+}
+
+.fila-clickeable td:last-child {
+  color: var(--autoridad);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════
+   TABLA DE DECISIONES POR EMPLEADO
+══════════════════════════════════════ */
+.decision-correcta td {
+  border-left: 3px solid var(--recompensa);
+}
+
+.decision-ignorar td {
+  border-left: 3px solid #e67e22;
+}
+
+.decision-clic td {
+  border-left: 3px solid var(--urgencia);
+}
+
+.decision-badge {
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.decision-badge.reportar {
+  background: var(--recompensa-claro);
+  color: var(--recompensa);
+}
+
+.decision-badge.ignorar {
+  background: #fff9e6;
+  color: #e67e22;
+}
+
+.decision-badge.clic {
+  background: var(--urgencia-claro);
+  color: var(--urgencia);
+}
+
+/* ══════════════════════════════════════
+   RECOMENDACIONES CARD
+══════════════════════════════════════ */
+.recomendaciones-card {
+  background: var(--gris-claro);
+  border-radius: var(--radio);
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.recomendaciones-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--oscuro);
+  margin-bottom: 16px;
+}
+
+.recomendaciones-card ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recomendaciones-card ul li {
+  font-size: 14px;
+  color: #555;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.recomendaciones-card ul li::before {
+  content: '💡';
+  position: absolute;
+  left: 0;
+}
+
+/* ══════════════════════════════════════
+   GRÁFICA DE BARRAS DEPARTAMENTOS
+══════════════════════════════════════ */
+.grafica-barras {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.grafica-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.grafica-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oscuro);
+  width: 160px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grafica-barra-contenedor {
+  flex: 1;
+  background: #eee;
+  border-radius: 50px;
+  height: 12px;
+}
+
+.grafica-barra-relleno {
+  height: 100%;
+  border-radius: 50px;
+  transition: width 1s ease;
+}
+
+.grafica-valor {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--oscuro);
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   EXPORTAR CSV
+══════════════════════════════════════ */
+.btn-exportar {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: var(--blanco);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-exportar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+}
+
+.admin-acciones {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+/* ══════════════════════════════════════
+   NÚMERO DE EMPLEADO
+══════════════════════════════════════ */
+.num-empleado-badge {
+  font-size: 11px;
+  color: var(--gris);
+  font-weight: 600;
+  background: var(--gris-claro);
+  padding: 2px 8px;
+  border-radius: 50px;
+  margin-left: 8px;
+}
+
+/* ══════════════════════════════════════
+   PANTALLAS NUEVAS — DRILL DOWN
+══════════════════════════════════════ */
+#pantalla-depto.activa,
+#pantalla-empleado.activa {
+  justify-content: flex-start;
+  padding-top: 30px;
+}

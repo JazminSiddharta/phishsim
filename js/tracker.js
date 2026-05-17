@@ -14,9 +14,10 @@ const Tracker = {
   },
 
   // ── Inicializar un nuevo empleado ──────────────────────────────────────
-  iniciarSesion(nombre, departamento) {
+  iniciarSesion(nombre, numEmpleado, departamento) {
     this.empleadoActual = {
       nombre,
+      numEmpleado,
       departamento,
       decisiones: [],
       fechaInicio: new Date().toISOString(),
