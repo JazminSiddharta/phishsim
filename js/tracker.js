@@ -1,132 +1,208 @@
 // js/tracker.js
-// Módulo de registro de decisiones del usuario
-// Almacena decisiones + tiempo + historial entre sesiones via localStorage
+// Módulo de registro de interacciones y almacenamiento de resultados
+// Guarda decisiones del empleado y persiste datos organizacionales
 
-const Tracker = (() => {
+const Tracker = {
 
-  let decisiones = [];
-  const STORAGE_KEY = 'phishsim_historial';
+  // Datos del empleado actual
+  empleadoActual: {
+    nombre: '',
+    departamento: '',
+    decisiones: [],
+    fechaInicio: null,
+    fechaFin: null,
+  },
 
-  // ── Clasificación de decisiones ────────────────────────
-  const clasificar = (escenario, decision) => {
-    let correcta     = false;
-    let tipodecision = '';
+  // ── Inicializar un nuevo empleado ──────────────────────────────────────
+  iniciarSesion(nombre, departamento) {
+    this.empleadoActual = {
+      nombre,
+      departamento,
+      decisiones: [],
+      fechaInicio: new Date().toISOString(),
+      fechaFin: null,
+    };
+    console.log(`✅ Tracker: sesión iniciada para ${nombre} — ${departamento}`);
+  },
 
-    if (escenario.esPhishing) {
-      correcta     = decision === 'reportar';
-      tipodecision = decision === 'reportar' ? 'verdadero_positivo'
-                   : decision === 'clic'     ? 'caida'
-                   : 'ignorado';
-    } else {
-      correcta     = decision === 'clic';
-      tipodecision = decision === 'clic'     ? 'verdadero_negativo'
-                   : decision === 'reportar' ? 'falso_positivo'
-                   : 'ignorado_legitimo';
-    }
-
-    return { correcta, tipodecision };
-  };
-
-  // ── Registrar decisión ─────────────────────────────────
-  const registrar = (escenario, decision, tiempoSegundos) => {
-    const { correcta, tipodecision } = clasificar(escenario, decision);
-
-    const velocidad = tiempoSegundos <= 5  ? 'impulsiva'
-                    : tiempoSegundos <= 15 ? 'normal'
-                    : 'reflexiva';
-
+  // ── Registrar una decisión del empleado ───────────────────────────────
+  registrarDecision(escenario, decision) {
     const entrada = {
-      id:           escenario.id,
-      categoria:    escenario.categoria,
-      nivel:        escenario.nivel,
-      asunto:       escenario.asunto,
-      esPhishing:   escenario.esPhishing,
-      decision:     decision,
-      correcta:     correcta,
-      tipodecision: tipodecision,
-      tiempo:       tiempoSegundos,
-      velocidad:    velocidad,
-      timestamp:    Date.now()
+      escenarioId: escenario.id,
+      categoria: escenario.categoria,
+      nivel: escenario.nivel,
+      decision,                          // 'clic' | 'ignorar' | 'reportar'
+      esPhishing: escenario.esPhishing,
+      correcta: decision === 'reportar',
+      timestamp: new Date().toISOString(),
+    };
+    this.empleadoActual.decisiones.push(entrada);
+    console.log(`📝 Decisión registrada: ${escenario.categoria} → ${decision}`);
+    return entrada;
+  },
+
+  // ── Finalizar sesión y guardar en localStorage ─────────────────────────
+  finalizarSesion() {
+    this.empleadoActual.fechaFin = new Date().toISOString();
+
+    // Calcular métricas individuales
+    const metricas = this.calcularMetricasIndividuales();
+    const resultado = {
+      ...this.empleadoActual,
+      metricas,
+      id: Date.now(),
     };
 
-    decisiones.push(entrada);
-    return entrada;
-  };
+    // Guardar en el historial organizacional
+    const historial = this.obtenerHistorial();
+    historial.push(resultado);
+    localStorage.setItem('secureaware_resultados', JSON.stringify(historial));
 
-  // ── Guardar sesión completa en localStorage ────────────
-  const guardarSesion = () => {
-    try {
-      const historial = cargarHistorial();
-      const sesion = {
-        fecha:      new Date().toLocaleDateString('es-MX'),
-        timestamp:  Date.now(),
-        decisiones: [...decisiones],
-        resumen: {
-          total:      decisiones.length,
-          correctas:  decisiones.filter(d => d.correcta).length,
-          caidas:     decisiones.filter(d => d.tipodecision === 'caida').length,
-          promedio:   tiempoPromedio()
-        }
+    console.log(`✅ Sesión finalizada y guardada para ${this.empleadoActual.nombre}`);
+    return resultado;
+  },
+
+  // ── Calcular métricas del empleado actual ─────────────────────────────
+  calcularMetricasIndividuales() {
+    const decisiones = this.empleadoActual.decisiones;
+    const total = decisiones.length;
+
+    if (total === 0) return {};
+
+    const clics = decisiones.filter(d => d.decision === 'clic').length;
+    const reportes = decisiones.filter(d => d.decision === 'reportar').length;
+    const ignorados = decisiones.filter(d => d.decision === 'ignorar').length;
+
+    // Métricas por categoría
+    const categorias = ['urgencia', 'autoridad', 'recompensa', 'contrasenas', 'redes_sociales', 'malware'];
+    const porCategoria = {};
+
+    categorias.forEach(cat => {
+      const delCat = decisiones.filter(d => d.categoria === cat);
+      if (delCat.length === 0) return;
+      const clicsCat = delCat.filter(d => d.decision === 'clic').length;
+      porCategoria[cat] = {
+        total: delCat.length,
+        clics: clicsCat,
+        reportes: delCat.filter(d => d.decision === 'reportar').length,
+        ignorados: delCat.filter(d => d.decision === 'ignorar').length,
+        tasaClic: Math.round((clicsCat / delCat.length) * 100),
       };
-      historial.push(sesion);
-      // Guardar máximo 10 sesiones
-      const ultimas = historial.slice(-10);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(ultimas));
-    } catch (e) {
-      console.warn('No se pudo guardar en localStorage:', e);
-    }
-  };
+    });
 
-  // ── Cargar historial de sesiones previas ───────────────
-  const cargarHistorial = () => {
+    // Categoría más vulnerable
+    let catMasVulnerable = null;
+    let maxTasaClic = -1;
+    Object.entries(porCategoria).forEach(([cat, datos]) => {
+      if (datos.tasaClic > maxTasaClic) {
+        maxTasaClic = datos.tasaClic;
+        catMasVulnerable = cat;
+      }
+    });
+
+    // Nivel de riesgo global
+    const tasaClicGlobal = Math.round((clics / total) * 100);
+    let nivelRiesgo = 'bajo';
+    if (tasaClicGlobal >= 60) nivelRiesgo = 'alto';
+    else if (tasaClicGlobal >= 30) nivelRiesgo = 'medio';
+
+    return {
+      total,
+      clics,
+      reportes,
+      ignorados,
+      tasaClic: tasaClicGlobal,
+      tasaDeteccion: Math.round((reportes / total) * 100),
+      tasaIgnorar: Math.round((ignorados / total) * 100),
+      nivelRiesgo,
+      porCategoria,
+      catMasVulnerable,
+    };
+  },
+
+  // ── Obtener historial completo organizacional ──────────────────────────
+  obtenerHistorial() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
+      const data = localStorage.getItem('secureaware_resultados');
+      return data ? JSON.parse(data) : [];
+    } catch {
       return [];
     }
-  };
+  },
 
-  // ── Limpiar historial ──────────────────────────────────
-  const limpiarHistorial = () => {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
-      console.warn('No se pudo limpiar localStorage:', e);
-    }
-  };
+  // ── Calcular métricas organizacionales (para el admin) ─────────────────
+  calcularMetricasOrganizacionales() {
+    const historial = this.obtenerHistorial();
+    if (historial.length === 0) return null;
 
-  // ── Consultas ──────────────────────────────────────────
-  const obtenerTodas      = () => [...decisiones];
-  const porCategoria      = (cat) => decisiones.filter(d => d.categoria === cat);
-  const contarPor         = (tipo) => decisiones.filter(d => d.decision === tipo).length;
-  const contarResultado   = (tipo) => decisiones.filter(d => d.tipodecision === tipo).length;
+    const total = historial.length;
 
-  const tiempoPromedio = () => {
-    if (decisiones.length === 0) return 0;
-    const suma = decisiones.reduce((acc, d) => acc + d.tiempo, 0);
-    return Math.round(suma / decisiones.length);
-  };
+    // Promedios globales
+    const tasaClicGlobal = Math.round(historial.reduce((s, e) => s + e.metricas.tasaClic, 0) / total);
+    const tasaDeteccionGlobal = Math.round(historial.reduce((s, e) => s + e.metricas.tasaDeteccion, 0) / total);
+    const tasaIgnorarGlobal = Math.round(historial.reduce((s, e) => s + e.metricas.tasaIgnorar, 0) / total);
 
-  const caídasImpulsivas = () =>
-    decisiones.filter(d => d.velocidad === 'impulsiva' && d.tipodecision === 'caida').length;
+    // Métricas por departamento
+    const deptos = {};
+    historial.forEach(emp => {
+      const d = emp.departamento;
+      if (!deptos[d]) {
+        deptos[d] = { nombre: d, participantes: 0, sumaClics: 0, sumaDeteccion: 0, nivelRiesgo: [] };
+      }
+      deptos[d].participantes++;
+      deptos[d].sumaClics += emp.metricas.tasaClic;
+      deptos[d].sumaDeteccion += emp.metricas.tasaDeteccion;
+      deptos[d].nivelRiesgo.push(emp.metricas.nivelRiesgo);
+    });
 
-  const reiniciar = () => {
-    decisiones = [];
-  };
+    const porDepartamento = Object.values(deptos).map(d => ({
+      nombre: d.nombre,
+      participantes: d.participantes,
+      tasaClic: Math.round(d.sumaClics / d.participantes),
+      tasaDeteccion: Math.round(d.sumaDeteccion / d.participantes),
+      nivelRiesgo: this.nivelMasFrecuente(d.nivelRiesgo),
+    }));
 
-  return {
-    registrar,
-    guardarSesion,
-    cargarHistorial,
-    limpiarHistorial,
-    obtenerTodas,
-    porCategoria,
-    contarPor,
-    contarResultado,
-    tiempoPromedio,
-    caídasImpulsivas,
-    reiniciar
-  };
+    // Área más vulnerable
+    const areaMasVulnerable = porDepartamento.reduce(
+      (max, d) => d.tasaClic > max.tasaClic ? d : max,
+      porDepartamento[0]
+    );
 
-})();
+    // Categoría más efectiva globalmente
+    const conteoVulnerabilidades = {};
+    historial.forEach(emp => {
+      const cat = emp.metricas.catMasVulnerable;
+      if (cat) conteoVulnerabilidades[cat] = (conteoVulnerabilidades[cat] || 0) + 1;
+    });
+
+    const catMasEfectiva = Object.entries(conteoVulnerabilidades)
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+
+    return {
+      total,
+      tasaClicGlobal,
+      tasaDeteccionGlobal,
+      tasaIgnorarGlobal,
+      porDepartamento,
+      areaMasVulnerable,
+      catMasEfectiva,
+      historial,
+    };
+  },
+
+  // ── Helper: nivel de riesgo más frecuente en un array ─────────────────
+  nivelMasFrecuente(niveles) {
+    const conteo = {};
+    niveles.forEach(n => conteo[n] = (conteo[n] || 0) + 1);
+    return Object.entries(conteo).sort((a, b) => b[1] - a[1])[0][0];
+  },
+
+  // ── Limpiar todos los datos (para el admin) ────────────────────────────
+  limpiarHistorial() {
+    localStorage.removeItem('secureaware_resultados');
+    console.log('🗑️ Historial organizacional limpiado');
+  },
+};
+
+console.log('✅ Tracker cargado correctamente');

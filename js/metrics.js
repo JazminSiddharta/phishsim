@@ -1,150 +1,330 @@
 // js/metrics.js
-// Módulo de cálculo y renderizado del dashboard
-// Procesa decisiones, tiempos e impulsividad
+// Módulo de métricas y dashboard
+// Renderiza resultados individuales y organizacionales
 
-const Metrics = (() => {
+const Metrics = {
 
-  // Calcula porcentaje redondeado
-  const pct = (parte, total) =>
-    total === 0 ? 0 : Math.round((parte / total) * 100);
+  // ── Labels legibles para categorías ───────────────────────────────────
+  labelsCategoria: {
+    urgencia: '⚡ Urgencia',
+    autoridad: '🏛️ Autoridad',
+    recompensa: '🎁 Recompensa',
+    contrasenas: '🔐 Contraseñas',
+    redes_sociales: '📱 Redes Sociales',
+    malware: '🦠 Malware',
+  },
 
-  // Perfil de riesgo expandido
-  const calcularPerfil = (tasaCaida, tasaFalsoPositivo) => {
-    if (tasaCaida === 0 && tasaFalsoPositivo === 0) return {
-      nivel: '🛡️ Perfil Experto',
-      clase: 'bajo',
-      icono: '🛡️',
-      descripcion: 'Excelente. Detectaste todos los ataques y no confundiste ningún correo legítimo. Tienes una cultura de seguridad sólida.'
-    };
-    if (tasaCaida === 0 && tasaFalsoPositivo > 0) return {
-      nivel: '🔍 Perfil Precavido',
-      clase: 'bajo',
-      icono: '🔍',
-      descripcion: 'No caíste en ningún phishing, aunque fuiste demasiado precavido con correos legítimos. Aprende a distinguir las señales de confianza.'
-    };
-    if (tasaCaida <= 33) return {
-      nivel: '⚠️ Riesgo Medio',
-      clase: 'medio',
-      icono: '⚠️',
-      descripcion: 'Detectaste la mayoría de los ataques, pero algunos lograron engañarte. Revisa las señales de alerta de cada categoría.'
-    };
-    return {
-      nivel: '🚨 Riesgo Alto',
-      clase: 'alto',
-      icono: '🚨',
-      descripcion: 'Varios ataques lograron engañarte. Es importante reforzar tus hábitos de verificación antes de hacer clic en cualquier enlace.'
-    };
-  };
+  // ── Renderizar resumen personal del empleado ──────────────────────────
+  renderizarResumenPersonal(resultado) {
+    const m = resultado.metricas;
 
-  // Etiqueta de velocidad
-  const etiquetaVelocidad = (segundos) => {
-    if (segundos <= 5) return { label: '⚡ Impulsiva', color: '#e74c3c' };
-    if (segundos <= 15) return { label: '👁️ Normal', color: '#e67e22' };
-    return { label: '🧠 Reflexiva', color: '#27ae60' };
-  };
+    // Encabezado
+    document.getElementById('resumen-nombre-empleado').textContent =
+      `${resultado.nombre} — ${resultado.departamento}`;
 
-  // Renderiza el dashboard completo
-  const renderizar = () => {
-    const todas = Tracker.obtenerTodas();
-    const total = todas.length;
-    const soloPhishing = todas.filter(d => d.esPhishing);
-    const soloLegitimos = todas.filter(d => !d.esPhishing);
-
-    const caidas = Tracker.contarResultado('caida');
-    const verdaderos = Tracker.contarResultado('verdadero_positivo');
-    const falsos = Tracker.contarResultado('falso_positivo');
-    const tasaCaida = pct(caidas, soloPhishing.length);
-    const tasaDeteccion = pct(verdaderos, soloPhishing.length);
-    const tasaFalsoPos = pct(falsos, soloLegitimos.length);
-    const promedio = Tracker.tiempoPromedio();
-    const impulsivas = Tracker.caídasImpulsivas();
-
-    // ── Métricas globales ──────────────────────────────────
-    document.getElementById('tasa-clic').textContent = `${tasaCaida}%`;
-    document.getElementById('tasa-deteccion').textContent = `${tasaDeteccion}%`;
-    document.getElementById('tasa-ignorar').textContent = `${tasaFalsoPos}%`;
-
-    // Actualizar label de falsos positivos
-    const cardFalsos = document.getElementById('tasa-ignorar').closest('.metrica-card');
-    cardFalsos.querySelector('.metrica-label').textContent = 'Falsos Positivos';
-    cardFalsos.querySelector('.metrica-desc').textContent =
-      'Correos legítimos reportados como phishing';
-
-    // ── Métricas de tiempo ─────────────────────────────────
-    const vel = etiquetaVelocidad(promedio);
-    document.getElementById('tiempo-promedio').textContent = `${promedio}s`;
-    document.getElementById('velocidad-label').textContent = vel.label;
-    document.getElementById('velocidad-label').style.color = vel.color;
-    document.getElementById('caidas-impulsivas').textContent =
-      `${impulsivas} caída${impulsivas !== 1 ? 's' : ''} por decisión impulsiva`;
-
-    // ── Perfil de riesgo ───────────────────────────────────
-    const perfil = calcularPerfil(tasaCaida, tasaFalsoPos);
+    // Perfil de riesgo
     const perfilEl = document.getElementById('perfil-riesgo');
-    perfilEl.className = `perfil-riesgo ${perfil.clase}`;
-    document.getElementById('riesgo-icono').textContent = perfil.icono;
-    document.getElementById('riesgo-nivel').textContent = perfil.nivel;
-    document.getElementById('riesgo-descripcion').textContent = perfil.descripcion;
+    perfilEl.className = `perfil-riesgo ${m.nivelRiesgo}`;
 
-    // ── Métricas por categoría ─────────────────────────────
-    ['urgencia', 'autoridad', 'recompensa'].forEach(cat => {
-      const catDec = Tracker.porCategoria(cat).filter(d => d.esPhishing);
-      const catCaidas = catDec.filter(d => d.tipodecision === 'caida').length;
-      const catTotal = catDec.length;
-      const catPct = pct(catCaidas, catTotal);
-      const catTiempo = catDec.length > 0
-        ? Math.round(catDec.reduce((a, d) => a + d.tiempo, 0) / catDec.length)
-        : 0;
+    const { icono, titulo, descripcion } = this.datosPerfil(m.nivelRiesgo, m.tasaClic);
+    document.getElementById('riesgo-icono').textContent = icono;
+    document.getElementById('riesgo-nivel').textContent = titulo;
+    document.getElementById('riesgo-descripcion').textContent = descripcion;
 
-      document.getElementById(`barra-${cat}`).style.width = `${catPct}%`;
-      document.getElementById(`pct-${cat}`).textContent = `${catPct}%`;
-      document.getElementById(`resultado-${cat}`).textContent =
-        `${catCaidas} de ${catTotal} correos lograron engañarte · promedio ${catTiempo}s`;
+    // Métricas globales
+    document.getElementById('tasa-clic').textContent = `${m.tasaClic}%`;
+    document.getElementById('tasa-deteccion').textContent = `${m.tasaDeteccion}%`;
+    document.getElementById('tasa-ignorar').textContent = `${m.tasaIgnorar}%`;
+
+    // Métricas por categoría — solo las que existen en los escenarios
+    this.renderizarBarraCategoria(
+      'urgencia', m.porCategoria.urgencia
+    );
+    this.renderizarBarraCategoria(
+      'autoridad', m.porCategoria.autoridad
+    );
+    this.renderizarBarraCategoria(
+      'recompensa', m.porCategoria.recompensa
+    );
+    this.renderizarBarraCategoria(
+      'contrasenas', m.porCategoria.contrasenas
+    );
+    this.renderizarBarraCategoria(
+      'redes_sociales', m.porCategoria.redes_sociales
+    );
+    this.renderizarBarraCategoria(
+      'malware', m.porCategoria.malware
+    );
+
+    // Mensaje de mejora principal
+    const mejora = this.mensajeMejora(m);
+    document.getElementById('mensaje-mejora').textContent = mejora;
+
+    // Animar barras después de un frame
+    setTimeout(() => this.animarBarras(m.porCategoria), 100);
+  },
+
+  // ── Renderizar una barra de categoría individual ──────────────────────
+  renderizarBarraCategoria(categoria, datos) {
+    const barraEl = document.getElementById(`barra-${categoria}`);
+    const pctEl = document.getElementById(`pct-${categoria}`);
+    const resultadoEl = document.getElementById(`resultado-${categoria}`);
+
+    if (!barraEl || !datos) return;
+
+    const pct = datos.tasaClic;
+    pctEl.textContent = `${pct}%`;
+    resultadoEl.textContent = this.labelResultadoCategoria(pct);
+  },
+
+  // ── Animar barras de progreso ──────────────────────────────────────────
+  animarBarras(porCategoria) {
+    Object.entries(porCategoria).forEach(([cat, datos]) => {
+      const barraEl = document.getElementById(`barra-${cat}`);
+      if (barraEl && datos) {
+        barraEl.style.width = `${datos.tasaClic}%`;
+      }
     });
+  },
 
-    // ── Tabla de decisiones ────────────────────────────────
-    const iconos = {
-      caida: '❌ Hiciste clic',
-      verdadero_positivo: '✅ Reportaste',
-      ignorado: '😐 Ignoraste',
-      verdadero_negativo: '✅ Identificaste',
-      falso_positivo: '⚠️ Falso positivo',
-      ignorado_legitimo: '😐 Ignoraste'
+  // ── Mensaje personalizado de área de mejora ───────────────────────────
+  mensajeMejora(m) {
+    if (!m.catMasVulnerable) {
+      return '¡Excelente desempeño! Mantén siempre esta actitud de precaución ante correos sospechosos.';
+    }
+
+    const mensajes = {
+      urgencia:
+        'Eres más susceptible a ataques que generan urgencia o miedo. Cuando un correo te presione a actuar rápido, detente y verifica antes de hacer clic.',
+      autoridad:
+        'Los ataques que suplantan figuras de autoridad (TI, directivos, gobierno) son tu punto débil. Recuerda: siempre verifica por otro canal antes de actuar.',
+      recompensa:
+        'Las ofertas atractivas o premios inesperados te generan vulnerabilidad. Si algo parece demasiado bueno para ser verdad, probablemente lo es.',
+      contrasenas:
+        'Necesitas reforzar tus conocimientos sobre contraseñas seguras. Una contraseña fuerte es tu primera línea de defensa.',
+      redes_sociales:
+        'Compartes demasiada información en redes sociales sin considerar los riesgos. Los atacantes usan esa información para personalizar sus ataques.',
+      malware:
+        'Tienes tendencia a abrir archivos o enlaces sin verificar su origen. Siempre confirma la fuente antes de descargar o ejecutar cualquier archivo.',
     };
 
-    const filas = todas.map(d => {
-      const vel = etiquetaVelocidad(d.tiempo);
-      return `
-        <tr>
-          <td>${d.id}</td>
-          <td>${d.esPhishing ? '🎣 Phishing' : '📧 Legítimo'}</td>
-          <td>${d.categoria}</td>
-          <td>${d.nivel}</td>
-          <td>${d.asunto.substring(0, 35)}...</td>
-          <td>${iconos[d.tipodecision] || d.decision}</td>
-          <td style="color:${vel.color};font-weight:600">${d.tiempo}s ${vel.label}</td>
-        </tr>
-      `;
-    }).join('');
+    return mensajes[m.catMasVulnerable] ||
+      'Continúa practicando para mejorar tu capacidad de detección.';
+  },
 
-    document.getElementById('tabla-decisiones').innerHTML = `
+  // ── Datos del perfil de riesgo ────────────────────────────────────────
+  datosPerfil(nivel, tasaClic) {
+    switch (nivel) {
+      case 'alto':
+        return {
+          icono: '🔴',
+          titulo: 'Perfil de Riesgo: ALTO',
+          descripcion: `Hiciste clic en el ${tasaClic}% de los correos maliciosos. Necesitas reforzar tus hábitos de seguridad digital con urgencia.`,
+        };
+      case 'medio':
+        return {
+          icono: '🟡',
+          titulo: 'Perfil de Riesgo: MEDIO',
+          descripcion: `Hiciste clic en el ${tasaClic}% de los correos maliciosos. Vas bien, pero hay áreas específicas donde puedes mejorar.`,
+        };
+      case 'bajo':
+        return {
+          icono: '🟢',
+          titulo: 'Perfil de Riesgo: BAJO',
+          descripcion: `Hiciste clic en el ${tasaClic}% de los correos maliciosos. Tienes buenos hábitos de seguridad digital. ¡Sigue así!`,
+        };
+      default:
+        return {
+          icono: '⚪', titulo: 'Perfil calculado', descripcion: ''
+        };
+    }
+  },
+
+  // ── Label de resultado por categoría ─────────────────────────────────
+  labelResultadoCategoria(tasaClic) {
+    if (tasaClic === 0) return '✅ Sin vulnerabilidad detectada';
+    if (tasaClic <= 33) return '🟡 Vulnerabilidad baja';
+    if (tasaClic <= 66) return '🟠 Vulnerabilidad media';
+    return '🔴 Alta vulnerabilidad';
+  },
+
+  // ══════════════════════════════════════════════════════════════════════
+  //  DASHBOARD ADMINISTRADOR
+  // ══════════════════════════════════════════════════════════════════════
+
+  renderizarDashboardAdmin() {
+    const datos = Tracker.calcularMetricasOrganizacionales();
+
+    if (!datos || datos.total === 0) {
+      document.getElementById('sin-datos').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('sin-datos').style.display = 'none';
+
+    // Stats generales
+    document.getElementById('total-participantes').textContent = datos.total;
+    document.getElementById('admin-tasa-clic').textContent = `${datos.tasaClicGlobal}%`;
+    document.getElementById('admin-tasa-deteccion').textContent = `${datos.tasaDeteccionGlobal}%`;
+    document.getElementById('area-vulnerable').textContent =
+      datos.areaMasVulnerable?.nombre || '—';
+
+    // Insights automáticos
+    this.renderizarInsights(datos);
+
+    // Tabla por departamento
+    this.renderizarTablaDepartamentos(datos.porDepartamento);
+
+    // Tabla de participantes individuales
+    this.renderizarTablaParticipantes(datos.historial);
+  },
+
+  // ── Insights automáticos ──────────────────────────────────────────────
+  renderizarInsights(datos) {
+    const contenedor = document.getElementById('admin-insights');
+    const insights = [];
+
+    // Insight 1: área más vulnerable
+    if (datos.areaMasVulnerable) {
+      insights.push({
+        tipo: 'alerta',
+        icono: '🚨',
+        texto: `El departamento de <strong>${datos.areaMasVulnerable.nombre}</strong> 
+                 es el más vulnerable con una tasa de clic del 
+                 <strong>${datos.areaMasVulnerable.tasaClic}%</strong>. 
+                 Se recomienda capacitación adicional.`,
+      });
+    }
+
+    // Insight 2: categoría de ataque más efectiva
+    if (datos.catMasEfectiva) {
+      insights.push({
+        tipo: 'info',
+        icono: '📊',
+        texto: `Los ataques de tipo <strong>${this.labelsCategoria[datos.catMasEfectiva]}</strong> 
+                 son los más efectivos contra el equipo. 
+                 Enfoca la capacitación en esta área.`,
+      });
+    }
+
+    // Insight 3: tasa de detección global
+    if (datos.tasaDeteccionGlobal >= 60) {
+      insights.push({
+        tipo: 'positivo',
+        icono: '✅',
+        texto: `El equipo tiene una tasa de detección del 
+                 <strong>${datos.tasaDeteccionGlobal}%</strong>. 
+                 El nivel de conciencia de seguridad es bueno.`,
+      });
+    } else {
+      insights.push({
+        tipo: 'alerta',
+        icono: '⚠️',
+        texto: `La tasa de detección global es del 
+                 <strong>${datos.tasaDeteccionGlobal}%</strong>. 
+                 Se recomienda reforzar la capacitación en toda la organización.`,
+      });
+    }
+
+    contenedor.innerHTML = insights.map(i => `
+      <div class="insight-card ${i.tipo}">
+        <span class="insight-icono">${i.icono}</span>
+        <span>${i.texto}</span>
+      </div>
+    `).join('');
+  },
+
+  // ── Tabla de resultados por departamento ──────────────────────────────
+  renderizarTablaDepartamentos(deptos) {
+    const contenedor = document.getElementById('tabla-departamentos');
+
+    if (deptos.length === 0) {
+      contenedor.innerHTML = '<p style="color:var(--gris)">Sin datos.</p>';
+      return;
+    }
+
+    const filas = deptos
+      .sort((a, b) => b.tasaClic - a.tasaClic)
+      .map(d => `
+        <tr>
+          <td><strong>${d.nombre}</strong></td>
+          <td>${d.participantes}</td>
+          <td>${d.tasaClic}%</td>
+          <td>${d.tasaDeteccion}%</td>
+          <td>
+            <span class="riesgo-badge ${d.nivelRiesgo}">
+              ${d.nivelRiesgo.toUpperCase()}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+    contenedor.innerHTML = `
       <table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Tipo</th>
-            <th>Categoría</th>
-            <th>Nivel</th>
-            <th>Asunto</th>
-            <th>Decisión</th>
-            <th>Tiempo</th>
+            <th>Departamento</th>
+            <th>Participantes</th>
+            <th>Tasa de Clic</th>
+            <th>Tasa de Detección</th>
+            <th>Nivel de Riesgo</th>
           </tr>
         </thead>
         <tbody>${filas}</tbody>
       </table>
     `;
-  };
+  },
 
-  return { renderizar };
+  // ── Tabla de participantes individuales ───────────────────────────────
+  renderizarTablaParticipantes(historial) {
+    const contenedor = document.getElementById('tabla-participantes');
 
-})();
+    const filas = historial
+      .sort((a, b) => new Date(b.fechaFin) - new Date(a.fechaFin))
+      .map(emp => `
+        <tr>
+          <td><strong>${emp.nombre}</strong></td>
+          <td>${emp.departamento}</td>
+          <td>${emp.metricas.tasaClic}%</td>
+          <td>${emp.metricas.tasaDeteccion}%</td>
+          <td>
+            <span class="riesgo-badge ${emp.metricas.nivelRiesgo}">
+              ${emp.metricas.nivelRiesgo.toUpperCase()}
+            </span>
+          </td>
+          <td>${this.formatearFecha(emp.fechaFin)}</td>
+        </tr>
+      `).join('');
+
+    contenedor.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Tasa de Clic</th>
+            <th>Tasa de Detección</th>
+            <th>Riesgo</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>${filas}</tbody>
+      </table>
+    `;
+  },
+
+  // ── Formatear fecha legible ────────────────────────────────────────────
+  formatearFecha(isoString) {
+    if (!isoString) return '—';
+    const d = new Date(isoString);
+    return d.toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  },
+};
+
+console.log('✅ Metrics cargado correctamente');

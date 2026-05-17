@@ -1,110 +1,157 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PhishSim — Simulador de Phishing</title>
+  <title>SecureAware — Capacitación en Seguridad Digital</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 1: BIENVENIDA
+       PANTALLA 1: INICIO — SELECCIÓN DE ROL
   ══════════════════════════════════════ -->
-  <div id="pantalla-bienvenida" class="pantalla activa">
+  <div id="pantalla-inicio" class="pantalla activa">
     <div class="contenedor-central">
-      <div class="logo">🎣</div>
-      <h1>PhishSim</h1>
-      <p class="subtitulo">Plataforma de Simulación de Phishing</p>
+      <div class="logo">🛡️</div>
+      <h1>SecureAware</h1>
+      <p class="subtitulo">Capacitación en Seguridad Digital</p>
       <p class="descripcion">
-        Pon a prueba tu capacidad para detectar correos de phishing. 
-        Enfrentarás <strong>9 escenarios reales</strong> basados en técnicas 
-        de ingeniería social documentadas.
+        Plataforma de concientización sobre amenazas digitales
+        para equipos de trabajo.
       </p>
-      <div class="categorias-preview">
-        <div class="categoria-badge urgencia">⚡ Urgencia</div>
-        <div class="categoria-badge autoridad">🏛️ Autoridad</div>
-        <div class="categoria-badge recompensa">🎁 Recompensa</div>
+      <div class="roles">
+        <button class="btn-rol" onclick="mostrarPantalla('pantalla-registro')">
+          <span class="rol-icono">👤</span>
+          <span class="rol-titulo">Soy Empleado</span>
+          <span class="rol-desc">Iniciar capacitación</span>
+        </button>
+        <button class="btn-rol btn-rol-admin" onclick="mostrarLoginAdmin()">
+          <span class="rol-icono">⚙️</span>
+          <span class="rol-titulo">Administrador</span>
+          <span class="rol-desc">Ver resultados del equipo</span>
+        </button>
       </div>
-      <p class="instruccion">
-        Para cada correo tendrás <strong>3 opciones</strong>: 
-        hacer clic en el enlace, ignorarlo o reportarlo como phishing.
-      </p>
-      <button class="btn-principal" onclick="iniciarSimulacion()">
-        Comenzar Simulación →
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1B: LOGIN ADMIN
+  ══════════════════════════════════════ -->
+  <div id="pantalla-login-admin" class="pantalla">
+    <div class="contenedor-central">
+      <div class="logo">⚙️</div>
+      <h1>Acceso Administrador</h1>
+      <p class="descripcion">Ingresa la contraseña para ver el dashboard organizacional.</p>
+      <div class="form-grupo">
+        <input type="password" id="input-password" class="input-campo" placeholder="Contraseña"
+          onkeydown="if(event.key==='Enter') verificarAdmin()" />
+      </div>
+      <div id="error-login" class="mensaje-error" style="display:none">
+        ❌ Contraseña incorrecta. Intenta de nuevo.
+      </div>
+      <button class="btn-principal" onclick="verificarAdmin()">
+        Ingresar →
       </button>
-      <button class="btn-principal" onclick="mostrarPantalla('pantalla-org')"
-        style="margin-top:12px; background: linear-gradient(135deg, #8e44ad, #9b59b6);">
-        👥 Modo Organizacional
-      </button>
-      <button class="btn-principal" onclick="mostrarPantalla('pantalla-analyzer')"
-        style="margin-top:12px; background: linear-gradient(135deg, #2980b9, #3498db);">
-        🔍 Analizar Header Real
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
+        ← Volver
       </button>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 2: SIMULADOR DE CORREOS
+       PANTALLA 2: REGISTRO DEL EMPLEADO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-registro" class="pantalla">
+    <div class="contenedor-central">
+      <div class="logo">📋</div>
+      <h1>Bienvenido</h1>
+      <p class="descripcion">
+        Antes de comenzar, necesitamos algunos datos para registrar
+        tu participación en la capacitación.
+      </p>
+
+      <div class="form-grupo">
+        <label class="form-label">Tu nombre completo</label>
+        <input type="text" id="input-nombre" class="input-campo" placeholder="Ej. María González" />
+      </div>
+
+      <div class="form-grupo">
+        <label class="form-label">Tu departamento</label>
+        <select id="input-departamento" class="input-campo">
+          <option value="">— Selecciona tu área —</option>
+          <option value="Contabilidad">Contabilidad</option>
+          <option value="Recursos Humanos">Recursos Humanos</option>
+          <option value="Ventas">Ventas</option>
+          <option value="TI / Tecnología">TI / Tecnología</option>
+          <option value="Dirección">Dirección</option>
+          <option value="Operaciones">Operaciones</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Legal">Legal</option>
+        </select>
+      </div>
+
+      <div id="error-registro" class="mensaje-error" style="display:none">
+        ❌ Por favor completa todos los campos antes de continuar.
+      </div>
+
+      <button class="btn-principal" onclick="iniciarCapacitacion()">
+        Comenzar Capacitación →
+      </button>
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
+        ← Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 3: SIMULADOR DE CORREOS
   ══════════════════════════════════════ -->
   <div id="pantalla-simulador" class="pantalla">
 
-    <!-- Timer -->
-    <div class="timer-contenedor">
-      <div class="timer-display" id="timer-display">⏱️ 0s</div>
-    </div>
-
-    <!-- Barra de progreso -->
     <div class="barra-superior">
       <div class="progreso-info">
-        <span id="correo-actual">Correo 1</span> de 
-        <span id="total-correos">9</span>
+        <span class="progreso-texto">
+          Ejercicio <span id="correo-actual">1</span> de
+          <span id="total-correos">9</span>
+        </span>
+        <span class="empleado-nombre" id="empleado-nombre-barra"></span>
       </div>
       <div class="barra-progreso">
         <div class="barra-relleno" id="barra-relleno"></div>
       </div>
-      <div class="categoria-actual" id="categoria-actual"></div>
+      <div class="progreso-inferior">
+        <span class="categoria-actual" id="categoria-actual"></span>
+        <span class="nivel-actual" id="nivel-actual"></span>
+      </div>
     </div>
 
-    <!-- Bandeja de entrada simulada -->
     <div class="contenedor-email">
-      
-      <!-- Cabecera del correo -->
+
       <div class="email-header">
-        <div class="email-avatar" id="email-avatar">B</div>
+        <div class="email-avatar" id="email-avatar">A</div>
         <div class="email-meta">
           <div class="email-remitente" id="email-remitente"></div>
           <div class="email-direccion" id="email-direccion"></div>
         </div>
-        <div class="email-nivel" id="email-nivel"></div>
+        <div class="email-nivel-badge" id="email-nivel"></div>
       </div>
 
-      <!-- Asunto -->
       <div class="email-asunto" id="email-asunto"></div>
-
-      <!-- Cuerpo del correo -->
       <div class="email-cuerpo" id="email-cuerpo"></div>
 
-      <!-- Botón de enlace simulado -->
       <div class="email-enlace-contenedor">
-        <button class="btn-enlace-phishing" id="btn-enlace">
-          🔗 Acceder al enlace
+        <button class="btn-enlace-phishing">
+          🔗 Acceder al enlace del correo
         </button>
       </div>
 
     </div>
 
-    <!-- Botón inspector -->
-    <button class="inspector-btn" onclick="toggleInspector()">
-      🔎 Inspeccionar correo antes de decidir
-    </button>
-
-    <!-- Panel inspector -->
-    <div class="inspector-panel" id="inspector-panel"></div>
-
-    <!-- Acciones del usuario -->
     <div class="acciones">
-      <p class="acciones-titulo">¿Qué haces con este correo?</p>
+      <p class="acciones-titulo">¿Qué harías con este correo?</p>
       <div class="botones-accion">
         <button class="btn-accion btn-clic" onclick="registrarDecision('clic')">
           🖱️ Hacer clic en el enlace
@@ -121,7 +168,7 @@
   </div>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 3: FEEDBACK EDUCATIVO
+       PANTALLA 4: FEEDBACK EDUCATIVO
   ══════════════════════════════════════ -->
   <div id="pantalla-feedback" class="pantalla">
     <div class="contenedor-feedback">
@@ -133,63 +180,41 @@
       </div>
 
       <div class="feedback-seccion">
-        <h3>📧 ¿Era phishing?</h3>
+        <h3>📧 ¿Era un intento de phishing?</h3>
         <p id="feedback-explicacion"></p>
       </div>
 
       <div class="feedback-seccion">
-        <h3 id="titulo-senales">🚩 Señales de alerta que debiste notar:</h3>
+        <h3>🚩 Señales de alerta que debiste notar:</h3>
         <ul id="feedback-senales"></ul>
       </div>
 
       <div class="feedback-seccion">
-        <h3>💡 Consejos para el futuro:</h3>
+        <h3>💡 Consejos para protegerte:</h3>
         <ul id="feedback-consejos"></ul>
       </div>
 
-      <!-- Feedback dinámico de IA -->
-      <div class="feedback-seccion">
-        <h3>✨ Análisis personalizado</h3>
-        <div id="claude-spinner" style="
-          display:none;
-          text-align:center;
-          padding:20px;
-          color:var(--gris);
-          font-size:14px;">
-          Generando análisis personalizado... 🤖
-        </div>
-        <div id="feedback-claude" style="display:none;"></div>
+      <div class="feedback-navegacion">
+        <button class="btn-principal" id="btn-siguiente" onclick="siguienteEscenario()">
+          Siguiente ejercicio →
+        </button>
       </div>
-
-      <button class="btn-principal" id="btn-siguiente" onclick="siguienteEscenario()">
-        Siguiente correo →
-      </button>
 
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 4: DASHBOARD DE MÉTRICAS
+       PANTALLA 5: RESUMEN PERSONAL
   ══════════════════════════════════════ -->
-  <div id="pantalla-dashboard" class="pantalla">
+  <div id="pantalla-resumen" class="pantalla">
     <div class="contenedor-dashboard">
 
-      <h1>📊 Tu Perfil de Vulnerabilidad</h1>
-      <p class="dashboard-subtitulo">Basado en tus decisiones durante la simulación</p>
-
-      <!-- Métricas de tiempo -->
-      <div class="metricas-tiempo">
-        <div class="tiempo-principal">
-          <div class="tiempo-valor" id="tiempo-promedio">0s</div>
-          <div class="tiempo-label">Tiempo promedio de decisión</div>
-        </div>
-        <div class="tiempo-detalle">
-          <div class="velocidad-label" id="velocidad-label"></div>
-          <div class="caidas-impulsivas" id="caidas-impulsivas"></div>
-        </div>
+      <div class="resumen-header">
+        <div class="logo">🎓</div>
+        <h1>Capacitación Completada</h1>
+        <p class="dashboard-subtitulo" id="resumen-nombre-empleado"></p>
       </div>
 
-      <!-- Perfil de riesgo general -->
       <div class="perfil-riesgo" id="perfil-riesgo">
         <div class="riesgo-icono" id="riesgo-icono"></div>
         <div class="riesgo-info">
@@ -198,212 +223,148 @@
         </div>
       </div>
 
-      <!-- Métricas globales -->
       <div class="metricas-globales">
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-clic">0%</div>
-          <div class="metrica-label">Tasa de Caída</div>
-          <div class="metrica-desc">Correos de phishing en los que hiciste clic</div>
+          <div class="metrica-label">Tasa de Clic</div>
+          <div class="metrica-desc">Correos en los que hiciste clic</div>
         </div>
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-deteccion">0%</div>
-          <div class="metrica-label">Tasa de Detección</div>
-          <div class="metrica-desc">Correos que reportaste correctamente</div>
+          <div class="metrica-label">Detección</div>
+          <div class="metrica-desc">Correos reportados correctamente</div>
         </div>
         <div class="metrica-card">
           <div class="metrica-valor" id="tasa-ignorar">0%</div>
-          <div class="metrica-label">Falsos Positivos</div>
-          <div class="metrica-desc">Correos legítimos reportados como phishing</div>
+          <div class="metrica-label">Ignorados</div>
+          <div class="metrica-desc">Correos ignorados sin reportar</div>
         </div>
       </div>
 
-      <!-- Métricas por categoría -->
-      <h2 class="seccion-titulo">Susceptibilidad por Tipo de Ataque</h2>
+      <h2 class="seccion-titulo">Tu susceptibilidad por tipo de ataque</h2>
       <div class="metricas-categorias">
 
         <div class="categoria-card urgencia">
           <div class="categoria-header">
             <span class="categoria-emoji">⚡</span>
-            <span class="categoria-nombre">Urgencia</span>
+            <span class="categoria-nombre">Ataques de Urgencia</span>
           </div>
           <div class="categoria-barra-contenedor">
             <div class="categoria-barra" id="barra-urgencia"></div>
           </div>
-          <div class="categoria-porcentaje" id="pct-urgencia">0%</div>
-          <div class="categoria-resultado" id="resultado-urgencia"></div>
+          <div class="categoria-stats">
+            <span class="categoria-porcentaje" id="pct-urgencia">0%</span>
+            <span class="categoria-resultado" id="resultado-urgencia"></span>
+          </div>
         </div>
 
         <div class="categoria-card autoridad">
           <div class="categoria-header">
             <span class="categoria-emoji">🏛️</span>
-            <span class="categoria-nombre">Autoridad</span>
+            <span class="categoria-nombre">Ataques de Autoridad</span>
           </div>
           <div class="categoria-barra-contenedor">
             <div class="categoria-barra" id="barra-autoridad"></div>
           </div>
-          <div class="categoria-porcentaje" id="pct-autoridad">0%</div>
-          <div class="categoria-resultado" id="resultado-autoridad"></div>
+          <div class="categoria-stats">
+            <span class="categoria-porcentaje" id="pct-autoridad">0%</span>
+            <span class="categoria-resultado" id="resultado-autoridad"></span>
+          </div>
         </div>
 
         <div class="categoria-card recompensa">
           <div class="categoria-header">
             <span class="categoria-emoji">🎁</span>
-            <span class="categoria-nombre">Recompensa</span>
+            <span class="categoria-nombre">Ataques de Recompensa</span>
           </div>
           <div class="categoria-barra-contenedor">
             <div class="categoria-barra" id="barra-recompensa"></div>
           </div>
-          <div class="categoria-porcentaje" id="pct-recompensa">0%</div>
-          <div class="categoria-resultado" id="resultado-recompensa"></div>
+          <div class="categoria-stats">
+            <span class="categoria-porcentaje" id="pct-recompensa">0%</span>
+            <span class="categoria-resultado" id="resultado-recompensa"></span>
+          </div>
         </div>
 
       </div>
 
-      <!-- Historial de sesiones -->
-      <h2 class="seccion-titulo">📅 Historial de Sesiones</h2>
-      <div id="historial-sesiones" style="margin-bottom:24px;"></div>
+      <div class="resumen-mensaje">
+        <h3>📌 Tu área de mejora principal:</h3>
+        <p id="mensaje-mejora"></p>
+      </div>
 
-      <!-- Resumen de decisiones -->
-      <h2 class="seccion-titulo">Resumen de Decisiones</h2>
-      <div id="tabla-decisiones"></div>
+      <div class="resumen-footer">
+        <p>✅ Tus resultados han sido registrados. Gracias por completar la capacitación.</p>
+      </div>
 
-      <!-- Botones finales -->
-      <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
-        <button class="btn-principal" id="btn-pdf" onclick="Reporter.generar()"
-          style="flex:1; background: linear-gradient(135deg, #2980b9, #3498db);">
-          📄 Descargar Reporte PDF
-        </button>
-        <button class="btn-principal" onclick="mostrarRegistroOrg()"
-          style="flex:1; background: linear-gradient(135deg, #8e44ad, #9b59b6);">
-          👥 Registrar en Modo Org
-        </button>
-        <button class="btn-principal btn-reiniciar" onclick="reiniciarSimulacion()"
-          style="flex:1">
-          🔄 Repetir Simulación
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 6: DASHBOARD ADMINISTRADOR
+  ══════════════════════════════════════ -->
+  <div id="pantalla-admin" class="pantalla">
+    <div class="contenedor-dashboard admin-dashboard">
+
+      <div class="admin-header">
+        <div>
+          <h1>📊 Dashboard Organizacional</h1>
+          <p class="dashboard-subtitulo">SecureAware — Panel de Administración</p>
+        </div>
+        <button class="btn-secundario" onclick="cerrarSesionAdmin()">
+          Cerrar sesión
         </button>
       </div>
 
-      <!-- Modal registro org -->
-      <div id="modal-org" style="display:none; margin-top:16px;
-        background:var(--gris-claro); border-radius:var(--radio); padding:20px;">
-        <p style="font-size:14px; color:var(--oscuro); margin-bottom:12px; font-weight:600;">
-          ¿Con qué nombre quieres aparecer en el dashboard del equipo?
+      <!-- Resumen general -->
+      <div class="admin-resumen" id="admin-resumen">
+        <div class="admin-stat">
+          <div class="admin-stat-valor" id="total-participantes">0</div>
+          <div class="admin-stat-label">Participantes</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-valor" id="admin-tasa-clic">0%</div>
+          <div class="admin-stat-label">Tasa de Clic Global</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-valor" id="admin-tasa-deteccion">0%</div>
+          <div class="admin-stat-label">Tasa de Detección Global</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-valor" id="area-vulnerable">—</div>
+          <div class="admin-stat-label">Área más vulnerable</div>
+        </div>
+      </div>
+
+      <!-- Insights automáticos -->
+      <div class="admin-insights" id="admin-insights"></div>
+
+      <!-- Métricas por departamento -->
+      <h2 class="seccion-titulo">Resultados por Departamento</h2>
+      <div id="tabla-departamentos"></div>
+
+      <!-- Tabla de participantes -->
+      <h2 class="seccion-titulo" style="margin-top:32px">
+        Registro Individual de Participantes
+      </h2>
+      <div id="tabla-participantes"></div>
+
+      <div class="admin-footer">
+        <p id="sin-datos" style="display:none; color: var(--gris); text-align:center; padding: 40px">
+          📭 Aún no hay participantes registrados. Comparte el link de la capacitación con tu equipo.
         </p>
-        <input id="org-nombre-input" type="text" placeholder="Tu nombre o alias..."
-          style="width:100%; padding:10px 14px; border:2px solid #ddd;
-                 border-radius:8px; font-size:14px; margin-bottom:12px;" />
-        <div style="display:flex; gap:10px;">
-          <button class="btn-principal" onclick="registrarEnOrg()" style="flex:2">
-            ✅ Registrar resultado
-          </button>
-          <button onclick="document.getElementById('modal-org').style.display='none'"
-            style="flex:1; background:none; border:1px solid #ddd; border-radius:8px;
-                   cursor:pointer; font-size:13px; color:var(--gris);">
-            Cancelar
-          </button>
-        </div>
       </div>
-
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       PANTALLA 5: MODO ORGANIZACIONAL
-  ══════════════════════════════════════ -->
-  <div id="pantalla-org" class="pantalla">
-    <div class="contenedor-dashboard">
-
-      <h1>👥 Dashboard Organizacional</h1>
-      <p class="dashboard-subtitulo">
-        Perfil de vulnerabilidad del equipo basado en simulaciones individuales
-      </p>
-
-      <div id="org-dashboard"></div>
-
-      <div style="display:flex; gap:12px; margin-top:24px;">
-        <button class="btn-principal" onclick="iniciarSimulacion()"
-          style="flex:2">
-          ▶️ Nueva Simulación
-        </button>
-        <button class="btn-principal" onclick="mostrarPantalla('pantalla-bienvenida')"
-          style="flex:1; background: linear-gradient(135deg, #6c757d, #495057);">
-          ← Volver
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       PANTALLA 6: ANALIZADOR DE HEADERS
-  ══════════════════════════════════════ -->
-  <div id="pantalla-analyzer" class="pantalla">
-    <div class="contenedor-dashboard">
-
-      <h1>🔍 Analizador de Headers</h1>
-      <p class="dashboard-subtitulo">
-        Pega el header completo de un correo sospechoso y PhishSim lo analizará automáticamente
-      </p>
-
-      <div style="
-        background: #eaf4fb;
-        border-left: 4px solid #2980b9;
-        border-radius: 8px;
-        padding: 16px 20px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        color: #555;
-        line-height: 1.7;">
-        <strong style="color:#2980b9">¿Cómo obtener el header de un correo?</strong><br>
-        En <strong>Gmail:</strong> Abrir correo → ⋮ (tres puntos) → "Mostrar original"<br>
-        En <strong>Outlook:</strong> Abrir correo → Archivo → Propiedades → Encabezados<br>
-        En <strong>Apple Mail:</strong> Ver → Mensaje → Todos los encabezados
-      </div>
-
-      <textarea id="analyzer-input" placeholder="Pega aquí el header completo del correo..." style="
-        width: 100%;
-        height: 200px;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        padding: 16px;
-        font-family: monospace;
-        font-size: 12px;
-        resize: vertical;
-        margin-bottom: 12px;
-        color: #333;
-        line-height: 1.6;
-      "></textarea>
-
-      <div style="display:flex; gap:12px; margin-bottom:24px;">
-        <button class="btn-principal" onclick="Analyzer.analizar()" style="flex:2">
-          🔍 Analizar Header
-        </button>
-        <button class="btn-principal" onclick="Analyzer.cargarEjemplo()"
-          style="flex:1; background: linear-gradient(135deg, #27ae60, #2ecc71);">
-          📋 Cargar Ejemplo
-        </button>
-        <button class="btn-principal" onclick="mostrarPantalla('pantalla-bienvenida')"
-          style="flex:1; background: linear-gradient(135deg, #6c757d, #495057);">
-          ← Volver
-        </button>
-      </div>
-
-      <div id="analyzer-resultados" style="display:none;"></div>
 
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/simulator.js"></script>
   <script src="js/metrics.js"></script>
-  <script src="js/reporter.js"></script>
-  <script src="js/analyzer.js"></script>
-  <script src="js/claude.js"></script>
-  <script src="js/org.js"></script>
   <script src="js/app.js"></script>
 
 </body>
+
 </html>
