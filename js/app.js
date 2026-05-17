@@ -3,6 +3,7 @@
 
 const ADMIN_PASSWORD = 'admin123';
 let resultadoFinal = null;
+let categoriaAnterior = null;
 
 // ══════════════════════════════════════════════════════════════════════════
 //  NAVEGACIÓN ENTRE PANTALLAS
@@ -76,12 +77,12 @@ function exportarCSV() {
     return;
   }
 
-  // Encabezados
   const headers = [
     'Nombre',
     'Num. Empleado',
     'Departamento',
     'Fecha',
+    'Score',
     'Tasa de Clic (%)',
     'Tasa de Detección (%)',
     'Tasa de Ignorar (%)',
@@ -89,12 +90,12 @@ function exportarCSV() {
     'Categoría más vulnerable',
   ];
 
-  // Filas
   const filas = historial.map(emp => [
     emp.nombre,
     emp.numEmpleado || 'N/A',
     emp.departamento,
     Metrics.formatearFecha(emp.fechaFin),
+    emp.score || 0,
     emp.metricas.tasaClic,
     emp.metricas.tasaDeteccion,
     emp.metricas.tasaIgnorar,
@@ -102,12 +103,10 @@ function exportarCSV() {
     emp.metricas.catMasVulnerable || 'N/A',
   ]);
 
-  // Construir CSV
   const csv = [headers, ...filas]
     .map(fila => fila.map(celda => `"${celda}"`).join(','))
     .join('\n');
 
-  // Descargar
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -134,28 +133,75 @@ function iniciarCapacitacion() {
 
   errorEl.style.display = 'none';
   Tracker.iniciarSesion(nombre, numEmpleado, departamento);
+  Gamification.inicializar();
   Simulator.inicializar(PHISHING_SCENARIOS);
+  categoriaAnterior = null;
   mostrarPantalla('pantalla-simulador');
   Simulator.renderizarEscenarioActual();
+  Gamification.iniciarTimer();
 }
 
+// ── Registrar decisión ────────────────────────────────────────────────────
 function registrarDecision(decision) {
   const escenario = Simulator.escenarioActual();
   Simulator.habilitarBotones(false);
+
+  // Registrar en gamificación
+  Gamification.registrarDecision(decision, escenario.nivel);
+
+  // Registrar en tracker
   Tracker.registrarDecision(escenario, decision);
+
+  // Mostrar feedback
   Simulator.renderizarFeedback(escenario, decision);
   mostrarPantalla('pantalla-feedback');
 }
 
+// ── Siguiente escenario con transición entre categorías ───────────────────
 function siguienteEscenario() {
   if (Simulator.hayMas()) {
     Simulator.avanzar();
-    mostrarPantalla('pantalla-simulador');
-    Simulator.renderizarEscenarioActual();
+    const siguiente = Simulator.escenarioActual();
+
+    // Verificar si cambiamos de categoría
+    if (categoriaAnterior && categoriaAnterior !== siguiente.categoria) {
+      Gamification.mostrarTransicion(
+        categoriaAnterior,
+        siguiente.categoria,
+        () => {
+          mostrarPantalla('pantalla-simulador');
+          Simulator.renderizarEscenarioActual();
+          Gamification.iniciarTimer();
+        }
+      );
+    } else {
+      mostrarPantalla('pantalla-simulador');
+      Simulator.renderizarEscenarioActual();
+      Gamification.iniciarTimer();
+    }
+
+    categoriaAnterior = siguiente.categoria;
+
   } else {
+    // Finalizar
     resultadoFinal = Tracker.finalizarSesion();
+
+    // Guardar score en el resultado
+    resultadoFinal.score = Gamification.score;
+    const historial = Tracker.obtenerHistorial();
+    const entrada = historial.find(e => e.id === resultadoFinal.id);
+    if (entrada) {
+      entrada.score = Gamification.score;
+      localStorage.setItem('secureaware_resultados', JSON.stringify(historial));
+    }
+
     mostrarPantalla('pantalla-resumen');
     Metrics.renderizarResumenPersonal(resultadoFinal);
+
+    // Score final e insignias
+    const scoreEl = document.getElementById('score-final-valor');
+    if (scoreEl) scoreEl.textContent = `⭐ ${Gamification.score}`;
+    Gamification.renderizarInsignias('insignias-contenedor');
   }
 }
 

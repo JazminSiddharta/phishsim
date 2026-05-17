@@ -1302,3 +1302,250 @@ body {
   justify-content: flex-start;
   padding-top: 30px;
 }
+
+/* ══════════════════════════════════════
+   HUD DE GAMIFICACIÓN
+══════════════════════════════════════ */
+.hud-contenedor {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.hud-score {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+}
+
+.hud-racha {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  animation: pulso 0.6s ease infinite alternate;
+}
+
+@keyframes pulso {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* ══════════════════════════════════════
+   TEMPORIZADOR
+══════════════════════════════════════ */
+.timer-display {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+
+.timer-normal {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.timer-advertencia {
+  background: #fff9e6;
+  color: #e67e22;
+}
+
+.timer-urgente {
+  background: var(--urgencia-claro);
+  color: var(--urgencia);
+  animation: pulso 0.4s ease infinite alternate;
+}
+
+/* ══════════════════════════════════════
+   PUNTOS FLOTANTES
+══════════════════════════════════════ */
+.puntos-flotantes,
+.bonus-flotante {
+  position: absolute;
+  top: -10px;
+  right: 80px;
+  font-size: 18px;
+  font-weight: 800;
+  pointer-events: none;
+  animation: flotar 1.5s ease forwards;
+  z-index: 100;
+}
+
+.puntos-verde {
+  color: #27ae60;
+}
+
+.puntos-amarillo {
+  color: #e67e22;
+}
+
+.bonus-flotante {
+  color: #3a7bd5;
+  font-size: 14px;
+  right: 140px;
+}
+
+@keyframes flotar {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+
+/* ══════════════════════════════════════
+   INSIGNIAS
+══════════════════════════════════════ */
+.insignias-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.insignia-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #fff9e6, #fef9f0);
+  border: 2px solid #f39c12;
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  animation: aparecer 0.5s ease;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.insignia-emoji {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.insignia-nombre {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--oscuro);
+  margin-bottom: 4px;
+}
+
+.insignia-desc {
+  font-size: 13px;
+  color: var(--gris);
+}
+
+/* Score final en resumen */
+.score-final {
+  text-align: center;
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  color: white;
+  border-radius: var(--radio);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.score-final-valor {
+  font-size: 52px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.score-final-label {
+  font-size: 14px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════════════
+   OVERLAY DE TRANSICIÓN
+══════════════════════════════════════ */
+#transicion-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 52, 96, 0.95);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+
+#transicion-overlay h2 {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+#transicion-mensaje {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 18px;
+  max-width: 500px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+#transicion-score {
+  color: #f39c12;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.transicion-barra {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  margin-top: 32px;
+  overflow: hidden;
+}
+
+.transicion-barra-relleno {
+  height: 100%;
+  background: #f39c12;
+  border-radius: 50px;
+  animation: cargar 2.5s linear forwards;
+}
+
+@keyframes cargar {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}

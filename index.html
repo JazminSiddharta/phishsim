@@ -116,6 +116,14 @@
   ══════════════════════════════════════ -->
   <div id="pantalla-simulador" class="pantalla">
 
+    <!-- HUD de gamificación -->
+    <div class="hud-contenedor" id="hud-contenedor">
+      <div class="hud-score" id="hud-score">⭐ 0 pts</div>
+      <div class="timer-display timer-normal" id="timer-display">⏱️ 60s</div>
+      <div class="hud-racha" id="hud-racha" style="display:none">🔥 Racha x0</div>
+    </div>
+
+    <!-- Barra de progreso -->
     <div class="barra-superior">
       <div class="progreso-info">
         <span class="progreso-texto">
@@ -219,6 +227,16 @@
         <h1>Capacitación Completada</h1>
         <p class="dashboard-subtitulo" id="resumen-nombre-empleado"></p>
       </div>
+
+      <!-- Score final -->
+      <div class="score-final">
+        <div class="score-final-valor" id="score-final-valor">0</div>
+        <div class="score-final-label">Puntos obtenidos</div>
+      </div>
+
+      <!-- Insignias -->
+      <h2 class="seccion-titulo">🏅 Insignias Obtenidas</h2>
+      <div class="insignias-contenedor" id="insignias-contenedor"></div>
 
       <div class="perfil-riesgo" id="perfil-riesgo">
         <div class="riesgo-icono" id="riesgo-icono"></div>
@@ -443,9 +461,20 @@
     </div>
   </div>
 
+  <!-- Overlay de transición entre categorías -->
+  <div id="transicion-overlay">
+    <h2>🎯 ¡Siguiente ronda!</h2>
+    <p id="transicion-mensaje"></p>
+    <p id="transicion-score"></p>
+    <div class="transicion-barra">
+      <div class="transicion-barra-relleno"></div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/tracker.js"></script>
+  <script src="js/gamification.js"></script>
   <script src="js/simulator.js"></script>
   <script src="js/metrics.js"></script>
   <script src="js/app.js"></script>
