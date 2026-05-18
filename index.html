@@ -11,19 +11,19 @@
 <body>
 
   <!-- ══════════════════════════════════════
-       PANTALLA 1: INICIO — SELECCIÓN DE ROL
+       PANTALLA 1: INICIO
   ══════════════════════════════════════ -->
   <div id="pantalla-inicio" class="pantalla activa">
     <div class="contenedor-central">
       <div class="logo">🛡️</div>
-      <h1>SecureAware</h1>
+      <h1 id="inicio-nombre-empresa">SecureAware</h1>
       <p class="subtitulo">Capacitación en Seguridad Digital</p>
       <p class="descripcion">
         Plataforma de concientización sobre amenazas digitales
         para equipos de trabajo.
       </p>
       <div class="roles">
-        <button class="btn-rol" onclick="mostrarPantalla('pantalla-registro')">
+        <button class="btn-rol" onclick="mostrarLoginEmpleado()">
           <span class="rol-icono">👤</span>
           <span class="rol-titulo">Soy Empleado</span>
           <span class="rol-desc">Iniciar capacitación</span>
@@ -31,7 +31,7 @@
         <button class="btn-rol btn-rol-admin" onclick="mostrarLoginAdmin()">
           <span class="rol-icono">⚙️</span>
           <span class="rol-titulo">Administrador</span>
-          <span class="rol-desc">Ver resultados del equipo</span>
+          <span class="rol-desc">Configurar y ver resultados</span>
         </button>
       </div>
     </div>
@@ -44,9 +44,9 @@
     <div class="contenedor-central">
       <div class="logo">⚙️</div>
       <h1>Acceso Administrador</h1>
-      <p class="descripcion">Ingresa la contraseña para ver el dashboard organizacional.</p>
+      <p class="descripcion">Ingresa la contraseña para acceder al panel de administración.</p>
       <div class="form-grupo">
-        <input type="password" id="input-password" class="input-campo" placeholder="Contraseña"
+        <input type="password" id="input-password" class="input-campo" placeholder="Contraseña de administrador"
           onkeydown="if(event.key==='Enter') verificarAdmin()" />
       </div>
       <div id="error-login" class="mensaje-error" style="display:none">
@@ -58,6 +58,183 @@
       <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
         ← Volver
       </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1C: LOGIN EMPLEADO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-login-empleado" class="pantalla">
+    <div class="contenedor-central">
+      <div class="logo">👤</div>
+      <h1>Iniciar Sesión</h1>
+      <p class="descripcion">
+        Ingresa tus datos para acceder a la capacitación.
+        Si es tu primera vez, te registraremos automáticamente.
+      </p>
+
+      <div class="form-grupo">
+        <label class="form-label">Número de empleado</label>
+        <input type="text" id="login-num-empleado" class="input-campo" placeholder="Ej. EMP-001" />
+      </div>
+
+      <div class="form-grupo">
+        <label class="form-label">Departamento</label>
+        <select id="login-departamento" class="input-campo">
+          <option value="">— Selecciona tu departamento —</option>
+        </select>
+      </div>
+
+      <div class="form-grupo">
+        <label class="form-label">Contraseña del departamento</label>
+        <input type="password" id="login-password" class="input-campo" placeholder="Contraseña de tu área"
+          onkeydown="if(event.key==='Enter') procesarLoginEmpleado()" />
+      </div>
+
+      <div id="error-login-empleado" class="mensaje-error" style="display:none"></div>
+
+      <button class="btn-principal" onclick="procesarLoginEmpleado()">
+        Entrar →
+      </button>
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
+        ← Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1D: REGISTRO PRIMER ACCESO
+  ══════════════════════════════════════ -->
+  <div id="pantalla-registro" class="pantalla">
+    <div class="contenedor-central">
+      <div class="logo">📋</div>
+      <h1>Primer Acceso</h1>
+      <p class="descripcion">
+        Es tu primera vez en SecureAware. Completa tu perfil para continuar.
+      </p>
+
+      <div class="form-grupo">
+        <label class="form-label">Tu nombre completo</label>
+        <input type="text" id="input-nombre" class="input-campo" placeholder="Ej. María González" />
+      </div>
+
+      <div id="error-registro" class="mensaje-error" style="display:none">
+        ❌ Por favor completa tu nombre para continuar.
+      </div>
+
+      <button class="btn-principal" onclick="completarRegistro()">
+        Continuar →
+      </button>
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-login-empleado')">
+        ← Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1E: MENÚ DE CAPACITACIONES
+  ══════════════════════════════════════ -->
+  <div id="pantalla-menu" class="pantalla">
+    <div class="contenedor-dashboard">
+
+      <div class="menu-header">
+        <div>
+          <h1>👋 Bienvenido, <span id="menu-nombre-empleado"></span></h1>
+          <p class="dashboard-subtitulo">
+            <span id="menu-num-empleado"></span> —
+            <span id="menu-departamento"></span>
+          </p>
+        </div>
+        <button class="btn-secundario" style="width:auto; padding: 10px 20px" onclick="cerrarSesionEmpleado()">
+          Cerrar sesión
+        </button>
+      </div>
+
+      <!-- Barra de progreso general -->
+      <div class="progreso-general">
+        <div class="progreso-general-header">
+          <span class="progreso-general-titulo">Tu progreso general</span>
+          <span class="progreso-general-pct" id="progreso-pct">0%</span>
+        </div>
+        <div class="barra-progreso">
+          <div class="barra-relleno" id="progreso-barra" style="width:0%"></div>
+        </div>
+        <p class="progreso-general-desc" id="progreso-desc"></p>
+      </div>
+
+      <!-- Tarjetas de capacitación -->
+      <h2 class="seccion-titulo">Módulos de Capacitación</h2>
+      <div class="modulos-grid" id="modulos-grid"></div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PANTALLA 1F: SETUP INICIAL ADMIN
+  ══════════════════════════════════════ -->
+  <div id="pantalla-setup" class="pantalla">
+    <div class="contenedor-dashboard" style="max-width:600px">
+
+      <div class="resumen-header">
+        <div class="logo">🏢</div>
+        <h1>Configuración Inicial</h1>
+        <p class="dashboard-subtitulo">
+          Configura SecureAware para tu organización antes de comenzar.
+        </p>
+      </div>
+
+      <!-- Nombre de la empresa -->
+      <div class="setup-seccion">
+        <h2 class="seccion-titulo">1. Nombre de la empresa</h2>
+        <div class="form-grupo">
+          <input type="text" id="setup-empresa" class="input-campo" placeholder="Ej. Empresa ABC S.A. de C.V." />
+        </div>
+      </div>
+
+      <!-- Contraseña del admin -->
+      <div class="setup-seccion">
+        <h2 class="seccion-titulo">2. Contraseña de administrador</h2>
+        <div class="form-grupo">
+          <input type="password" id="setup-admin-password" class="input-campo"
+            placeholder="Contraseña maestra del administrador" />
+        </div>
+        <div class="form-grupo">
+          <input type="password" id="setup-admin-password2" class="input-campo" placeholder="Confirmar contraseña" />
+        </div>
+      </div>
+
+      <!-- Departamentos -->
+      <div class="setup-seccion">
+        <h2 class="seccion-titulo">3. Departamentos</h2>
+        <p style="font-size:13px; color:var(--gris); margin-bottom:16px">
+          Agrega los departamentos de tu empresa y asigna una contraseña a cada uno.
+          Los empleados usarán esta contraseña para iniciar sesión.
+        </p>
+
+        <div class="form-grupo" style="display:flex; gap:10px; align-items:flex-end">
+          <div style="flex:1">
+            <label class="form-label">Nombre del departamento</label>
+            <input type="text" id="setup-depto-nombre" class="input-campo" placeholder="Ej. Contabilidad" />
+          </div>
+          <div style="flex:1">
+            <label class="form-label">Contraseña</label>
+            <input type="text" id="setup-depto-password" class="input-campo" placeholder="Ej. conta2025" />
+          </div>
+          <button class="btn-exportar" style="margin-bottom:0; white-space:nowrap" onclick="agregarDeptoSetup()">
+            + Agregar
+          </button>
+        </div>
+
+        <div id="setup-error-depto" class="mensaje-error" style="display:none"></div>
+        <div id="setup-lista-deptos" class="setup-lista-deptos"></div>
+      </div>
+
+      <div id="setup-error-general" class="mensaje-error" style="display:none"></div>
+
+      <button class="btn-principal" onclick="finalizarSetup()">
+        Guardar y comenzar →
+      </button>
+
     </div>
   </div>
 
@@ -320,6 +497,10 @@
         <p>✅ Tus resultados han sido registrados. Gracias por completar la capacitación.</p>
       </div>
 
+      <button class="btn-principal" id="btn-volver-menu" onclick="volverAlMenu()" style="margin-top:16px; display:none">
+        ← Volver al menú
+      </button>
+
     </div>
   </div>
 
@@ -473,6 +654,8 @@
 
   <!-- Scripts -->
   <script src="js/data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/gamification.js"></script>
   <script src="js/simulator.js"></script>
