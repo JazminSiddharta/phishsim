@@ -465,15 +465,24 @@ function siguienteEscenario() {
             localStorage.setItem('secureaware_resultados', JSON.stringify(historial));
         }
 
-        // Marcar capacitación como completada
-        const categoriaModulo = Simulator.escenarios[0]?.categoria || 'phishing';
-        const moduloId = categoriaModulo === 'urgencia' ||
-            categoriaModulo === 'autoridad' ||
-            categoriaModulo === 'recompensa'
-            ? 'phishing' : categoriaModulo;
-        Auth.marcarCapacitacion(empleadoActivo.numEmpleado, moduloId);
+        // ── Verificar aprobación mínima (70% de detección) ──────────────────
+        const tasaDeteccion = resultadoFinal.metricas.tasaDeteccion;
+        const MINIMO_APROBACION = 70;
+        const aprobado = tasaDeteccion >= MINIMO_APROBACION;
 
-        // Mostrar resumen
+        if (aprobado) {
+            // Marcar capacitación como completada
+            const categoriaModulo = Simulator.escenarios[0]?.categoria || 'phishing';
+            const moduloId = ['urgencia', 'autoridad', 'recompensa'].includes(categoriaModulo)
+                ? 'phishing' : categoriaModulo;
+            Auth.marcarCapacitacion(empleadoActivo.numEmpleado, moduloId);
+        }
+
+        // Mostrar resumen con resultado de aprobación
+        resultadoFinal.aprobado = aprobado;
+        resultadoFinal.tasaDeteccion = tasaDeteccion;
+        resultadoFinal.minimoAprobacion = MINIMO_APROBACION;
+
         mostrarPantalla('pantalla-resumen');
         Metrics.renderizarResumenPersonal(resultadoFinal);
 
@@ -481,10 +490,79 @@ function siguienteEscenario() {
         if (scoreEl) scoreEl.textContent = `⭐ ${Gamification.score}`;
         Gamification.renderizarInsignias('insignias-contenedor');
 
-        // Botón para volver al menú
-        const btnSiguiente = document.getElementById('btn-volver-menu');
-        if (btnSiguiente) btnSiguiente.style.display = 'block';
+        // Mostrar banner de aprobación o reprobación
+        renderizarBannerAprobacion(aprobado, tasaDeteccion, MINIMO_APROBACION);
     }
+}
+
+function renderizarBannerAprobacion(aprobado, tasaDeteccion, minimo) {
+    const btnVolverMenu = document.getElementById('btn-volver-menu');
+    if (!btnVolverMenu) return;
+
+    // Insertar banner antes del botón
+    const bannerExistente = document.getElementById('banner-aprobacion');
+    if (bannerExistente) bannerExistente.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'banner-aprobacion';
+
+    if (aprobado) {
+        banner.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #F0FFF4, #C6F6D5);
+        border: 2px solid #38A169;
+        border-radius: 14px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        text-align: center;
+      ">
+        <div style="font-size: 36px; margin-bottom: 8px">🎉</div>
+        <div style="font-size: 18px; font-weight: 800; color: #276749; margin-bottom: 4px">
+          ¡Módulo Aprobado!
+        </div>
+        <div style="font-size: 14px; color: #2F855A">
+          Obtuviste una tasa de detección del <strong>${tasaDeteccion}%</strong> — 
+          superaste el mínimo requerido del ${minimo}%.
+        </div>
+      </div>
+    `;
+        btnVolverMenu.textContent = '← Volver al menú';
+        btnVolverMenu.style.display = 'block';
+
+    } else {
+        banner.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #FFF5F5, #FED7D7);
+        border: 2px solid #E53E3E;
+        border-radius: 14px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        text-align: center;
+      ">
+        <div style="font-size: 36px; margin-bottom: 8px">📚</div>
+        <div style="font-size: 18px; font-weight: 800; color: #9B2C2C; margin-bottom: 4px">
+          Módulo No Aprobado
+        </div>
+        <div style="font-size: 14px; color: #C53030; margin-bottom: 16px">
+          Obtuviste una tasa de detección del <strong>${tasaDeteccion}%</strong>. 
+          Necesitas al menos el <strong>${minimo}%</strong> para aprobar.
+          Repasa el material e inténtalo de nuevo.
+        </div>
+      </div>
+    `;
+        btnVolverMenu.textContent = '🔄 Reintentar módulo';
+        btnVolverMenu.style.display = 'block';
+        btnVolverMenu.onclick = () => reiniciarModuloActual();
+    }
+
+    btnVolverMenu.parentNode.insertBefore(banner, btnVolverMenu);
+}
+
+function reiniciarModuloActual() {
+    const categoriaModulo = Simulator.escenarios[0]?.categoria || 'phishing';
+    const moduloId = ['urgencia', 'autoridad', 'recompensa'].includes(categoriaModulo)
+        ? 'phishing' : categoriaModulo;
+    iniciarModulo(moduloId);
 }
 
 function volverAlMenu() {
