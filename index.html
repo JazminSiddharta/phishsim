@@ -11,6 +11,62 @@
 <body>
 
   <!-- ══════════════════════════════════════
+       PANTALLA 0: SPLASH
+  ══════════════════════════════════════ -->
+  <div id="pantalla-splash" class="pantalla activa">
+    <div class="splash-contenedor">
+
+      <div class="splash-logo">🛡️</div>
+
+      <div class="splash-badge">
+        ● Plataforma de Capacitación Empresarial
+      </div>
+
+      <h1 class="splash-titulo">
+        Protege tu equipo con<br>
+        <span>SecureAware</span>
+      </h1>
+
+      <p class="splash-subtitulo">
+        Capacitación interactiva en ciberseguridad para organizaciones.
+        Mide, entrena y fortalece el factor humano de tu empresa.
+      </p>
+
+      <div class="splash-stats">
+        <div class="splash-stat">
+          <div class="splash-stat-valor">4</div>
+          <div class="splash-stat-label">Módulos</div>
+        </div>
+        <div class="splash-stat">
+          <div class="splash-stat-valor">9+</div>
+          <div class="splash-stat-label">Escenarios reales</div>
+        </div>
+        <div class="splash-stat">
+          <div class="splash-stat-valor">100%</div>
+          <div class="splash-stat-label">Interactivo</div>
+        </div>
+      </div>
+
+      <div class="splash-botones">
+        <button class="btn-splash-principal" onclick="mostrarLoginEmpleado()">
+          Comenzar →
+        </button>
+        <button class="btn-splash-secundario" onclick="mostrarLoginAdmin()">
+          Acceso Administrador
+        </button>
+      </div>
+
+      <div class="splash-features">
+        <span class="splash-feature">Simulación de phishing real</span>
+        <span class="splash-feature">Dashboard organizacional</span>
+        <span class="splash-feature">Métricas por departamento</span>
+        <span class="splash-feature">Exportar resultados</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
        PANTALLA 1: INICIO
   ══════════════════════════════════════ -->
   <div id="pantalla-inicio" class="pantalla activa">
@@ -55,7 +111,7 @@
       <button class="btn-principal" onclick="verificarAdmin()">
         Ingresar →
       </button>
-      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-splash')">
         ← Volver
       </button>
     </div>
@@ -96,7 +152,7 @@
       <button class="btn-principal" onclick="procesarLoginEmpleado()">
         Entrar →
       </button>
-      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-inicio')">
+      <button class="btn-secundario" onclick="mostrarPantalla('pantalla-splash')">
         ← Volver
       </button>
     </div>

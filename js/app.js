@@ -22,15 +22,15 @@ function mostrarPantalla(idPantalla) {
 // ══════════════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si el sistema está configurado
-    if (!Config.estaConfigurada()) {
-        mostrarPantalla('pantalla-setup');
-    } else {
-        // Mostrar nombre de empresa en inicio
+    // Siempre mostrar splash primero
+    mostrarPantalla('pantalla-splash');
+
+    // Si ya está configurado, actualizar nombre en pantalla inicio
+    if (Config.estaConfigurada()) {
         document.getElementById('inicio-nombre-empresa').textContent =
             Config.obtenerNombreEmpresa();
-        mostrarPantalla('pantalla-inicio');
     }
+
     console.log('✅ SecureAware inicializado correctamente');
 });
 
@@ -124,7 +124,8 @@ function finalizarSetup() {
     Config.finalizarSetup(empresa, pass1);
 
     document.getElementById('inicio-nombre-empresa').textContent = empresa;
-    mostrarPantalla('pantalla-inicio');
+    document.getElementById('inicio-nombre-empresa').textContent = empresa;
+    mostrarPantalla('pantalla-splash');
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -150,7 +151,7 @@ function verificarAdmin() {
 }
 
 function cerrarSesionAdmin() {
-    mostrarPantalla('pantalla-inicio');
+    mostrarPantalla('pantalla-splash');
 }
 
 // ── Drill-down departamento ───────────────────────────────────────────────
@@ -308,7 +309,7 @@ function completarRegistro() {
 
 function cerrarSesionEmpleado() {
     empleadoActivo = null;
-    mostrarPantalla('pantalla-inicio');
+    mostrarPantalla('pantalla-splash');
 }
 
 // ══════════════════════════════════════════════════════════════════════════
