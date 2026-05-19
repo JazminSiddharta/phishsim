@@ -390,15 +390,36 @@ function mostrarMenuEmpleado() {
 // ══════════════════════════════════════════════════════════════════════════
 
 function iniciarModulo(categoriaId) {
-    // Filtrar escenarios por categoría
-    // Por ahora phishing usa los 9 escenarios existentes
-    // Las demás categorías se añadirán en el siguiente bloque
+    // Mostrar lección primero
+    const leccionHeader = document.getElementById('leccion-header-modulo');
+    if (leccionHeader) {
+        const labels = {
+            phishing: '🎣 Phishing',
+            contrasenas: '🔐 Contraseñas Seguras',
+            redes_sociales: '📱 Redes Sociales',
+            malware: '🦠 Malware',
+        };
+        leccionHeader.textContent = labels[categoriaId] || categoriaId;
+    }
+
+    // Guardar el módulo actual para usarlo después
+    window._moduloActual = categoriaId;
+
+    // Renderizar lección
+    Lessons.renderizar(categoriaId);
+    mostrarPantalla('pantalla-leccion');
+}
+
+function iniciarEjerciciosDesdeLeccion() {
+    const categoriaId = window._moduloActual;
+
     const escenariosFiltrados = categoriaId === 'phishing'
         ? PHISHING_SCENARIOS
         : PHISHING_SCENARIOS.filter(e => e.categoria === categoriaId);
 
     if (escenariosFiltrados.length === 0) {
         alert('Este módulo estará disponible próximamente. 🚧');
+        mostrarMenuEmpleado();
         return;
     }
 
