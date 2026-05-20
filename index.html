@@ -651,6 +651,124 @@
         </p>
       </div>
 
+      <!-- Zona de configuración -->
+      <div class="admin-config-zona">
+
+        <h2 class="seccion-titulo">⚙️ Configuración de la Empresa</h2>
+
+        <!-- Nombre de empresa -->
+        <div class="config-seccion">
+          <h3 class="config-seccion-titulo">Nombre de la empresa</h3>
+          <div class="config-fila">
+            <input type="text" id="config-nombre-empresa" class="input-campo" style="max-width:360px"
+              placeholder="Nombre de tu empresa" />
+            <button class="btn-exportar" onclick="guardarNombreEmpresa()">
+              💾 Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Contraseña admin -->
+        <div class="config-seccion">
+          <h3 class="config-seccion-titulo">Cambiar contraseña de administrador</h3>
+          <div class="config-fila">
+            <input type="password" id="config-pass-nueva" class="input-campo" style="max-width:240px"
+              placeholder="Nueva contraseña" />
+            <input type="password" id="config-pass-confirmar" class="input-campo" style="max-width:240px"
+              placeholder="Confirmar contraseña" />
+            <button class="btn-exportar" onclick="guardarPasswordAdmin()">
+              💾 Guardar
+            </button>
+          </div>
+          <div id="config-pass-error" class="mensaje-error" style="display:none; margin-top:8px"></div>
+          <div id="config-pass-ok"
+            style="display:none; color:var(--recompensa); font-size:13px; margin-top:8px; font-weight:600">
+            ✅ Contraseña actualizada correctamente.
+          </div>
+        </div>
+
+        <!-- Departamentos -->
+        <div class="config-seccion">
+          <h3 class="config-seccion-titulo">Departamentos</h3>
+          <div class="config-fila">
+            <input type="text" id="config-depto-nombre" class="input-campo" style="max-width:240px"
+              placeholder="Nombre del departamento" />
+            <input type="text" id="config-depto-pass" class="input-campo" style="max-width:200px"
+              placeholder="Contraseña" />
+            <button class="btn-exportar" onclick="agregarDeptoAdmin()">
+              + Agregar
+            </button>
+          </div>
+          <div id="config-depto-error" class="mensaje-error" style="display:none; margin-top:8px"></div>
+          <div id="config-lista-deptos" class="setup-lista-deptos" style="margin-top:14px"></div>
+        </div>
+
+        <!-- Zona de peligro -->
+        <div class="zona-peligro">
+          <h3 class="zona-peligro-titulo">⚠️ Zona de Peligro</h3>
+
+          <div class="zona-peligro-accion">
+            <div>
+              <div class="zona-peligro-label">Borrar todos los resultados</div>
+              <div class="zona-peligro-desc">
+                Elimina todos los registros de capacitación. La configuración de la empresa se mantiene.
+              </div>
+            </div>
+            <button class="btn-peligro" onclick="confirmarBorrarResultados()">
+              🗑️ Borrar resultados
+            </button>
+          </div>
+
+          <div class="zona-peligro-accion">
+            <div>
+              <div class="zona-peligro-label">Cerrar sesión de empresa</div>
+              <div class="zona-peligro-desc">
+                Vuelve a la pantalla de inicio. La configuración y resultados se mantienen guardados.
+              </div>
+            </div>
+            <button class="btn-peligro btn-peligro-naranja" onclick="cerrarSesionAdmin()">
+              🚪 Cerrar sesión
+            </button>
+          </div>
+
+          <div class="zona-peligro-accion">
+            <div>
+              <div class="zona-peligro-label">Resetear empresa completa</div>
+              <div class="zona-peligro-desc">
+                Borra TODA la configuración, departamentos, empleados y resultados.
+                Esta acción no se puede deshacer.
+              </div>
+            </div>
+            <button class="btn-peligro" onclick="confirmarResetTotal()">
+              💣 Resetear todo
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal de confirmación -->
+      <div id="modal-confirmacion" class="modal-overlay" style="display:none">
+        <div class="modal-contenido">
+          <div class="modal-icono" id="modal-icono">⚠️</div>
+          <h2 class="modal-titulo" id="modal-titulo"></h2>
+          <p class="modal-desc" id="modal-desc"></p>
+          <div class="modal-input-contenedor" id="modal-input-contenedor" style="display:none">
+            <p class="modal-input-label" id="modal-input-label"></p>
+            <input type="text" id="modal-input" class="input-campo" placeholder="Escribe para confirmar" />
+          </div>
+          <div class="modal-botones">
+            <button class="btn-secundario" style="width:auto; padding:12px 28px" onclick="cerrarModal()">
+              Cancelar
+            </button>
+            <button class="btn-peligro" id="modal-btn-confirmar" onclick="ejecutarAccionModal()">
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

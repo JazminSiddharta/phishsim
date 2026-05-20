@@ -104,11 +104,11 @@ const Config = {
     // ══════════════════════════════════════════════════════════════════════
 
     resetTotal() {
-        localStorage.removeItem(this.STORAGE_KEY);
-        localStorage.removeItem('secureaware_resultados');
-        localStorage.removeItem('secureaware_empleados');
-        console.log('🗑️ Sistema reseteado completamente');
-    },
+  localStorage.removeItem(this.STORAGE_KEY);
+  localStorage.removeItem('secureaware_resultados');
+  localStorage.removeItem('secureaware_empleados');
+  console.log('🗑️ Sistema reseteado completamente');
+},
 };
 
 console.log('✅ Config cargado correctamente');
