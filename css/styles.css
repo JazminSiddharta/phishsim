@@ -2591,6 +2591,286 @@ body {
 }
 
 /* ══════════════════════════════════════
+   SLIDE TIPO: EJEMPLOS (¿Es phishing?)
+══════════════════════════════════════ */
+.slide-ejemplos {
+  padding: 36px 40px;
+  text-align: center;
+}
+
+.vidas-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vidas-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gris-oscuro);
+}
+
+#vidas-display {
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.ejemplos-progreso {
+  font-size: 13px;
+  color: var(--gris);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Correo simulado en ejemplos */
+.ejemplo-correo {
+  background: var(--blanco);
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radio-sm);
+  overflow: hidden;
+  margin-bottom: 16px;
+  text-align: left;
+  animation: aparecer 0.4s ease;
+}
+
+.ejemplo-correo-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--gris-claro);
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.ejemplo-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--azul-electrico), var(--cian));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.ejemplo-meta { flex: 1; }
+
+.ejemplo-remitente {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--azul-oscuro);
+  margin-bottom: 2px;
+}
+
+.ejemplo-asunto {
+  font-size: 12px;
+  color: var(--gris);
+}
+
+.ejemplo-cuerpo {
+  padding: 16px 18px;
+  font-size: 14px;
+  color: var(--gris-oscuro);
+  line-height: 1.7;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.ejemplo-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.btn-ejemplo {
+  padding: 14px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-legitimo {
+  background: var(--recompensa-claro);
+  color: var(--recompensa);
+  border-right: 1px solid #E2E8F0;
+}
+
+.btn-legitimo:hover:not(:disabled) {
+  background: var(--recompensa);
+  color: white;
+}
+
+.btn-phishing {
+  background: var(--urgencia-claro);
+  color: var(--urgencia);
+}
+
+.btn-phishing:hover:not(:disabled) {
+  background: var(--urgencia);
+  color: white;
+}
+
+/* Feedback del ejemplo */
+.ejemplo-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  animation: aparecer 0.3s ease;
+}
+
+.ejemplo-feedback.correcto {
+  background: var(--recompensa-claro);
+  border-top: 2px solid var(--recompensa);
+  color: #276749;
+}
+
+.ejemplo-feedback.incorrecto {
+  background: var(--urgencia-claro);
+  border-top: 2px solid var(--urgencia);
+  color: #9B2C2C;
+}
+
+.ejemplo-feedback-icono {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.ejemplo-resaltado {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.06);
+  border-radius: var(--radio-sm);
+  font-size: 12px;
+  font-family: monospace;
+}
+
+/* ══════════════════════════════════════
+   SLIDE TIPO: SEÑALES CON EJEMPLOS
+══════════════════════════════════════ */
+.senal-ejemplo {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: aparecer 0.3s ease;
+}
+
+.senal-ejemplo-fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.senal-ejemplo-label {
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 50px;
+}
+
+.senal-ejemplo-label.rojo {
+  background: var(--urgencia-claro);
+  color: var(--urgencia);
+}
+
+.senal-ejemplo-label.verde {
+  background: var(--recompensa-claro);
+  color: var(--recompensa);
+}
+
+.senal-ejemplo-valor {
+  color: var(--gris-oscuro);
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════
+   SLIDE TIPO: RESUMEN
+══════════════════════════════════════ */
+.slide-resumen {
+  padding: 36px 40px;
+  text-align: center;
+}
+
+.resumen-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+  color: var(--cian);
+  padding: 6px 18px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  border: 1px solid rgba(0,229,255,0.2);
+}
+
+.resumen-puntos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.resumen-punto {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--gris-claro);
+  border-radius: var(--radio-sm);
+  padding: 18px 20px;
+  border-left: 4px solid var(--azul-electrico);
+  animation: aparecer 0.5s ease both;
+}
+
+.resumen-punto-icono {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.resumen-punto-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--azul-oscuro);
+  margin-bottom: 4px;
+}
+
+.resumen-punto-desc {
+  font-size: 13px;
+  color: var(--gris-oscuro);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════
+   CONCEPTO — INTRO
+══════════════════════════════════════ */
+.concepto-intro {
+  font-size: 15px;
+  color: var(--gris-oscuro);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  background: var(--autoridad-claro);
+  border-left: 4px solid var(--azul-electrico);
+  padding: 14px 18px;
+  border-radius: var(--radio-sm);
+  text-align: left;
+}
+
+/* ══════════════════════════════════════
    ANIMACIONES
 ══════════════════════════════════════ */
 @keyframes aparecer {
