@@ -671,7 +671,7 @@ const Lessons = {
     this.quizRespondido   = false;
 
     switch (slide.tipo) {
-      case 'casoreal':        contenedor.innerHTML = this.htmlCasoReal(slide);       break;
+      case 'casoreal':        contenedor.innerHTML = this.htmlCasoReal(slide, empleadoActivo?.nombre);       break;       break;
       case 'concepto':        contenedor.innerHTML = this.htmlConcepto(slide);       break;
       case 'flipcards':       contenedor.innerHTML = this.htmlFlipCards(slide);      break;
       case 'ejemplos':        contenedor.innerHTML = this.htmlEjemplos(slide);       break;
@@ -694,10 +694,11 @@ const Lessons = {
   //  HTML DE SLIDES
   // ══════════════════════════════════════════════════════════════════════
 
-  htmlCasoReal(slide) {
+  htmlCasoReal(slide, nombreEmpleado) {
     return `
       <div class="slide-casoreal">
         <div class="casoreal-tag">${slide.tag}</div>
+${nombreEmpleado ? `<div class="casoreal-saludo">👋 Hola, <strong>${nombreEmpleado}</strong> — esto le puede pasar a cualquiera</div>` : ''}
         <h2 class="casoreal-titulo">${slide.titulo}</h2>
         <p class="casoreal-desc">${slide.desc}</p>
         <div class="casoreal-stats">

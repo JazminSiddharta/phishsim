@@ -563,12 +563,19 @@ function mostrarMenuEmpleado() {
         <div class="modulo-emoji">${m.emoji}</div>
         <div class="modulo-titulo">${m.titulo}</div>
         <div class="modulo-desc">${m.desc}</div>
+        <div class="modulo-meta">
+          <span class="modulo-tiempo">⏱️ ${Lessons.contenido[m.id]?.tiempo || '~10 min'}</span>
+          <span class="modulo-dificultad">${'⭐'.repeat(Lessons.contenido[m.id]?.dificultad || 1)}</span>
+        </div>
         <div class="modulo-estado ${completado ? 'hecho' : 'pendiente'}">
           ${completado ? '✅ Completado' : '▶ Comenzar'}
         </div>
       </div>
     `;
   }).join('');
+
+  // Mostrar recordatorio de módulos pendientes
+  setTimeout(() => mostrarRecordatorio(), 300);
 
   mostrarPantalla('pantalla-menu');
 }
@@ -690,6 +697,8 @@ function siguienteEscenario() {
     if (scoreEl) scoreEl.textContent = `⭐ ${Gamification.score}`;
     Gamification.renderizarInsignias('insignias-contenedor');
     renderizarBannerAprobacion(aprobado, tasaDeteccion, MINIMO_APROBACION);
+    // Verificar si completó todos los módulos
+    verificarCertificado();
   }
 }
 
@@ -754,3 +763,115 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ SecureAware inicializado correctamente');
   console.log(`📋 Escenarios disponibles: ${PHISHING_SCENARIOS.length}`);
 });
+// ══════════════════════════════════════════════════════════════════════════
+//  CERTIFICADO DE COMPLETACIÓN
+// ══════════════════════════════════════════════════════════════════════════
+
+function verificarCertificado() {
+  if (!empleadoActivo) return;
+
+  const progreso = Auth.calcularProgreso(empleadoActivo.numEmpleado);
+  if (progreso.porcentaje < 100) return;
+
+  // Mostrar certificado
+  const contenedor = document.getElementById('certificado-contenedor');
+  if (!contenedor) return;
+
+  contenedor.style.display = 'block';
+
+  document.getElementById('certificado-nombre').textContent =
+    empleadoActivo.nombre;
+  document.getElementById('certificado-depto').textContent =
+    empleadoActivo.departamento;
+  document.getElementById('certificado-fecha').textContent =
+    new Intl.DateTimeFormat('es-MX', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    }).format(new Date());
+  document.getElementById('certificado-score').textContent =
+    `⭐ ${resultadoFinal?.score || 0} pts`;
+
+  contenedor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  mostrarToast('🏆 ¡Completaste todos los módulos! Descarga tu certificado');
+}
+
+function imprimirCertificado() {
+  window.print();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  RECORDATORIO DE MÓDULOS PENDIENTES
+// ══════════════════════════════════════════════════════════════════════════
+
+function mostrarRecordatorio() {
+  if (!empleadoActivo) return;
+
+  const progreso = Auth.calcularProgreso(empleadoActivo.numEmpleado);
+  if (progreso.porcentaje === 100) return;
+
+  const pendientes = progreso.categorias
+    .filter(c => !c.completada)
+    .map(c => {
+      const labels = {
+        phishing:       '🎣 Phishing',
+        contrasenas:    '🔐 Contraseñas',
+        redes_sociales: '📱 Redes Sociales',
+        malware:        '🦠 Malware',
+      };
+      return labels[c.id] || c.id;
+    });
+
+  if (pendientes.length === 0) return;
+
+  // Insertar banner en el menú
+  const menu  = document.getElementById('modulos-grid');
+  if (!menu) return;
+
+  const existente = document.getElementById('recordatorio-banner');
+  if (existente) existente.remove();
+
+  const banner = document.createElement('div');
+  banner.id        = 'recordatorio-banner';
+  banner.className = 'recordatorio-banner';
+  banner.innerHTML = `
+    <div class="recordatorio-icono">👋</div>
+    <div class="recordatorio-texto">
+      <div class="recordatorio-titulo">
+        Bienvenido de nuevo, ${empleadoActivo.nombre}
+      </div>
+      <div class="recordatorio-desc">
+        Te ${pendientes.length === 1 ? 'falta' : 'faltan'} 
+        ${pendientes.length} módulo${pendientes.length > 1 ? 's' : ''}: 
+        ${pendientes.join(', ')}
+      </div>
+    </div>
+  `;
+
+  menu.parentNode.insertBefore(banner, menu);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  MODO DEMO PARA EXPO
+// ══════════════════════════════════════════════════════════════════════════
+
+function activarModoDemo() {
+  // Crear empleado demo
+  empleadoActivo = {
+    nombre:       'Demo User',
+    numEmpleado:  'DEMO-001',
+    departamento: 'Demo',
+  };
+
+  // Mostrar badge de demo
+  let badge = document.getElementById('demo-badge');
+  if (!badge) {
+    badge    = document.createElement('div');
+    badge.id = 'demo-badge';
+    badge.className = 'demo-badge';
+    badge.textContent = '🎭 MODO DEMO';
+    document.body.appendChild(badge);
+  }
+  badge.style.display = 'block';
+
+  mostrarMenuEmpleado();
+  mostrarToast('🎭 Modo demo activado — los datos no se guardarán');
+}

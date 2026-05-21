@@ -51,8 +51,14 @@
         <button class="btn-splash-principal" onclick="mostrarLoginEmpleado()">
           Comenzar →
         </button>
-        <button class="btn-splash-secundario" onclick="mostrarLoginAdmin()">
+        <button class="btn-splash-secundario"
+                onclick="mostrarLoginAdmin()">
           Acceso Administrador
+        </button>
+        <button class="btn-splash-secundario"
+                onclick="activarModoDemo()"
+                style="border-color: var(--naranja); color: var(--naranja)">
+          🎭 Modo Demo
         </button>
       </div>
 
@@ -573,6 +579,46 @@
       <div class="resumen-mensaje">
         <h3>📌 Tu área de mejora principal:</h3>
         <p id="mensaje-mejora"></p>
+      </div>
+
+      <!-- Certificado de completación (aparece al terminar todos los módulos) -->
+      <div id="certificado-contenedor" style="display:none">
+        <div class="certificado">
+          <div class="certificado-header">
+            <div class="certificado-logo">🛡️</div>
+            <div class="certificado-titulo">Certificado de Completación</div>
+            <div class="certificado-subtitulo">SecureAware — Capacitación en Seguridad Digital</div>
+          </div>
+          <div class="certificado-cuerpo">
+            <p class="certificado-texto">Este certificado acredita que</p>
+            <div class="certificado-nombre" id="certificado-nombre"></div>
+            <p class="certificado-texto">ha completado satisfactoriamente todos los módulos de capacitación en ciberseguridad, demostrando conocimientos en Phishing, Contraseñas Seguras, Redes Sociales y Malware.</p>
+            <div class="certificado-detalles">
+              <div class="certificado-detalle">
+                <div class="certificado-detalle-valor" id="certificado-fecha"></div>
+                <div class="certificado-detalle-label">Fecha de completación</div>
+              </div>
+              <div class="certificado-detalle">
+                <div class="certificado-detalle-valor" id="certificado-depto"></div>
+                <div class="certificado-detalle-label">Departamento</div>
+              </div>
+              <div class="certificado-detalle">
+                <div class="certificado-detalle-valor" id="certificado-score"></div>
+                <div class="certificado-detalle-label">Score total</div>
+              </div>
+            </div>
+          </div>
+          <div class="certificado-footer">
+            <div class="certificado-firma">
+              <div class="certificado-firma-linea"></div>
+              <div class="certificado-firma-label">SecureAware Platform</div>
+            </div>
+          </div>
+          <button class="btn-exportar" style="margin-top:20px; width:100%"
+                  onclick="imprimirCertificado()">
+            🖨️ Imprimir / Guardar certificado
+          </button>
+        </div>
       </div>
 
       <div class="resumen-footer">

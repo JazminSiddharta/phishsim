@@ -3074,3 +3074,221 @@ body {
   gap: 12px;
   justify-content: center;
 }
+/* ══════════════════════════════════════
+   PERSONALIZACIÓN — SALUDO EN LECCIÓN
+══════════════════════════════════════ */
+.casoreal-saludo {
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 8px;
+}
+/* ══════════════════════════════════════
+   CERTIFICADO DE COMPLETACIÓN
+══════════════════════════════════════ */
+.certificado {
+  border: 3px solid var(--azul-electrico);
+  border-radius: var(--radio);
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: var(--blanco);
+  box-shadow: 0 8px 32px rgba(0,123,255,0.15);
+}
+
+.certificado-header {
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+  padding: 28px;
+  text-align: center;
+  border-bottom: 3px solid var(--azul-electrico);
+}
+
+.certificado-logo {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.certificado-titulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--blanco);
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.certificado-subtitulo {
+  font-size: 13px;
+  color: var(--cian);
+  letter-spacing: 0.5px;
+}
+
+.certificado-cuerpo {
+  padding: 32px 36px;
+  text-align: center;
+}
+
+.certificado-texto {
+  font-size: 14px;
+  color: var(--gris-oscuro);
+  margin-bottom: 8px;
+}
+
+.certificado-nombre {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--azul-oscuro);
+  margin: 16px 0;
+  padding: 12px 24px;
+  border-top: 2px solid #E2E8F0;
+  border-bottom: 2px solid #E2E8F0;
+  font-style: italic;
+}
+
+.certificado-detalles {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.certificado-detalle {
+  background: var(--gris-claro);
+  border-radius: var(--radio-sm);
+  padding: 14px;
+  text-align: center;
+}
+
+.certificado-detalle-valor {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--azul-oscuro);
+  margin-bottom: 4px;
+}
+
+.certificado-detalle-label {
+  font-size: 11px;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.certificado-footer {
+  padding: 20px 36px;
+  border-top: 2px solid #E2E8F0;
+  display: flex;
+  justify-content: center;
+}
+
+.certificado-firma {
+  text-align: center;
+  width: 200px;
+}
+
+.certificado-firma-linea {
+  height: 2px;
+  background: var(--azul-oscuro);
+  margin-bottom: 8px;
+}
+
+.certificado-firma-label {
+  font-size: 12px;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════════════
+   RECORDATORIO DE MÓDULOS PENDIENTES
+══════════════════════════════════════ */
+.recordatorio-banner {
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: var(--radio-sm);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: aparecer 0.4s ease;
+}
+
+.recordatorio-icono {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.recordatorio-texto {
+  flex: 1;
+}
+
+.recordatorio-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blanco);
+  margin-bottom: 2px;
+}
+
+.recordatorio-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ══════════════════════════════════════
+   TIEMPO ESTIMADO EN MÓDULOS
+══════════════════════════════════════ */
+.modulo-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.modulo-tiempo {
+  font-size: 11px;
+  color: var(--gris);
+  background: rgba(0,0,0,0.05);
+  padding: 3px 10px;
+  border-radius: 50px;
+}
+
+.modulo-dificultad {
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════
+   MODO DEMO
+══════════════════════════════════════ */
+.demo-badge {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: var(--naranja);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 999;
+  display: none;
+  animation: aparecer 0.3s ease;
+}
+
+/* Print styles para certificado */
+@media print {
+  body > *:not(#pantalla-resumen) { display: none !important; }
+  #pantalla-resumen { display: block !important; }
+  .certificado { box-shadow: none; border: 2px solid #333; }
+  .btn-exportar { display: none; }
+  .btn-principal { display: none; }
+  #banner-aprobacion { display: none; }
+  .score-final { display: none; }
+  .insignias-contenedor { display: none; }
+  .metricas-globales { display: none; }
+  .metricas-categorias { display: none; }
+  .resumen-mensaje { display: none; }
+  .resumen-footer { display: none; }
+  #btn-volver-menu { display: none; }
+}
